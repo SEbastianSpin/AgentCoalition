@@ -1,0 +1,3 @@
+[submodule "src/DStarLiteJava"]
+	path = src/DStarLiteJava
+	url = https://github.com/daniel-beard/DStarLiteJava
