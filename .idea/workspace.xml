@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6700717a-c5b2-4ddb-b1e5-40f5d19de49c" name="Changes" comment="init">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="fb689d7a-f5f6-4e6e-87df-88837e303b20" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -19,11 +17,13 @@
       </list>
     </option>
   </component>
-  <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/src/StatusAgent.java" root0="FORCE_HIGHLIGHTING" />
   </component>
-  <component name="ProjectId" id="2PWLOig3vLtpvZ2X49EdmoJVoKI" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="2QCqW8m8TsaPGfawEDakN77E1Uv" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -32,34 +32,43 @@
   "keyToString": {
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "last_opened_file_path": "C:/Users/Sebastian/Documents/SebasLab/JADE-bin-4.6.0/jade/lib/jade.jar",
+    "WebServerToolWindowFactoryState": "false",
+    "last_opened_file_path": "C:/Users/osmns/Desktop/WUT/SEMESTER 6/Agent Sytems/JADE/ProjectWorking",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
     "project.structure.last.edited": "Libraries",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0"
+    "project.structure.proportion": "0.15332031",
+    "project.structure.side.proportion": "0.2",
+    "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+  <component name="RunManager">
+    <configuration name="Boot" type="Application" factoryName="Application" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="jade.Boot" />
+      <module name="ProjectWorking" />
+      <option name="PROGRAM_PARAMETERS" value="-gui statusAgent:StatusAgent;carrier1:TransportAgent();carrier2:TransportAgent();carrier3:TransportAgent();Scheduler:SchedulerAgent" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="6700717a-c5b2-4ddb-b1e5-40f5d19de49c" name="Changes" comment="" />
-      <created>1683567948245</created>
+      <changelist id="fb689d7a-f5f6-4e6e-87df-88837e303b20" name="Changes" comment="" />
+      <created>1684867941209</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1683567948245</updated>
+      <updated>1684867941209</updated>
+      <workItem from="1684867942843" duration="38596000" />
+      <workItem from="1684959779979" duration="1153000" />
     </task>
-    <task id="LOCAL-00001" summary="init">
-      <created>1683571757496</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1683571757496</updated>
-    </task>
-    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
-  <component name="VcsManagerConfiguration">
-    <MESSAGE value="init" />
-    <option name="LAST_COMMIT_MESSAGE" value="init" />
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
   </component>
 </project>
