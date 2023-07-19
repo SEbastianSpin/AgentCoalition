@@ -4,7 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fb689d7a-f5f6-4e6e-87df-88837e303b20" name="Changes" comment="" />
+    <list default="true" id="fb689d7a-f5f6-4e6e-87df-88837e303b20" name="Changes" comment="Some small changes">
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/jade.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/jade.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/APDescription.txt" beforeDir="false" afterPath="$PROJECT_DIR$/APDescription.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MTPs-Main-Container.txt" beforeDir="false" afterPath="$PROJECT_DIR$/MTPs-Main-Container.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/SchedulerAgent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SchedulerAgent.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/StatusAgent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/StatusAgent.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/TransportAgent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/TransportAgent.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -16,6 +24,9 @@
         <option value="Class" />
       </list>
     </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/src/StatusAgent.java" root0="FORCE_HIGHLIGHTING" />
@@ -33,7 +44,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "C:/Users/osmns/Desktop/WUT/SEMESTER 6/Agent Sytems/JADE/ProjectWorking",
+    "last_opened_file_path": "C:/Users/osmns/Desktop/jade.jar",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -65,10 +76,23 @@
       <updated>1684867941209</updated>
       <workItem from="1684867942843" duration="38596000" />
       <workItem from="1684959779979" duration="1153000" />
+      <workItem from="1689759525815" duration="412000" />
     </task>
+    <task id="LOCAL-00001" summary="Some small changes">
+      <created>1689759906413</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1689759906413</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Some small changes" />
+    <option name="LAST_COMMIT_MESSAGE" value="Some small changes" />
   </component>
 </project>

@@ -1,5 +1,4 @@
 import jade.core.Agent;
-import jade.core.Agent;
 import jade.core.behaviours.*;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
@@ -13,35 +12,27 @@ enum States{
     BROKEN
 }
 public class TransportAgent extends Agent {
-
-private static int nextId = 0;
-public int id;
-private States state;
-
-
-public TransportAgent(){
-
-    this.state = States.IDLE; //It must be idle initially
-    this.id = nextId++;
-
-}
-
-private void handleProposeMessage(ACLMessage message) { //This handler check if transport agent is free for task assignment
-    if (state == States.IDLE) {
-        ACLMessage reply = message.createReply();
-        reply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
-        reply.setContent("as");
-        send(reply);
-        this.state = States.ACTIVE;
-        System.out.println(""+this.getName()+"Started working");
-        System.out.println("Accepted proposal from " + message.getSender().getName());
-    } else {
-        System.out.println("Ignoring proposal from " + message.getSender().getName() + " as the agent is not active");
+    public States state;
+    private boolean handleProposeMessage(ACLMessage message) { //This handler check if transport agent is free for task assignment
+        if (state == States.IDLE) {
+            ACLMessage reply = message.createReply();
+            reply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
+            reply.setContent("as");
+            send(reply);
+            this.state = States.ACTIVE;
+            System.out.println(""+this.getName()+"Started working");
+            System.out.println("Accepted proposal from " + message.getSender().getName());
+            return true;
+        } else {
+            System.out.println("Ignoring proposal from " + message.getSender().getName() + " as the agent is not active");
+            return false;
+        }
     }
-}
 
     @Override
     protected void setup() {
+
+        this.state = States.IDLE; //It must be idle initially
 
         // REGISTERING THE TRANSPORT AGENTS TO DF
 
@@ -53,7 +44,6 @@ private void handleProposeMessage(ACLMessage message) { //This handler check if 
         ServiceDescription serviceDescription = new ServiceDescription();
         serviceDescription.setType("TransportAgent");
         serviceDescription.setName(getLocalName() + "-TransportAgent");
-
         agentDescription.addServices(serviceDescription);
 
         try {
@@ -64,23 +54,23 @@ private void handleProposeMessage(ACLMessage message) { //This handler check if 
 
         //RECEIVING MESSAGES
 
-       addBehaviour(new CyclicBehaviour(this) {
-           @Override
-           public void action() {
-               ACLMessage rcv = receive();
-               if (rcv != null) {
-                   switch (rcv.getPerformative()) {
-                       case ACLMessage.PROPOSE:
+        addBehaviour(new CyclicBehaviour(this) {
+            @Override
+            public void action() {
+                ACLMessage rcv = receive();
+                if (rcv != null) {
+                    switch (rcv.getPerformative()) {
+                        case ACLMessage.PROPOSE:
                             handleProposeMessage(rcv);
                             break;
-                       case ACLMessage.REQUEST:
+                        case ACLMessage.REQUEST:
                             System.out.println(""+rcv.getContent()+"");
 
-                   }
-               }
-               block();
-           }
-       });
+                    }
+                }
+                block();
+            }
+        });
 
     }
 

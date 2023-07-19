@@ -1,8 +1,8 @@
 <component name="libraryTable">
   <library name="jade">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../../../../../jade.jar!/" />
-      <root url="jar://$PROJECT_DIR$/../../../../../commons-codec-1.3.jar!/" />
+      <root url="jar://$USER_HOME$/Desktop/commons-codec-1.3.jar!/" />
+      <root url="jar://$USER_HOME$/Desktop/jade.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
