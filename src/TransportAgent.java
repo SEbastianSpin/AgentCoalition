@@ -6,36 +6,45 @@ import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 
+import java.util.Random;
+
 enum States{
     ACTIVE,
     IDLE,
     BROKEN
 }
+
 public class TransportAgent extends Agent {
-    public States state;
-    private boolean handleProposeMessage(ACLMessage message) { //This handler check if transport agent is free for task assignment
+
+    private static int nextId = 0;
+    public int id;
+    private States state;
+    private double probability; // probability of breaking down
+    private Random random;
+
+    public TransportAgent(){
+        this.state = States.IDLE; //It must be idle initially
+        this.id = nextId++;
+        this.probability = 0.5; // probability of breaking down
+        this.random = new Random();
+    }
+
+    private void handleProposeMessage(ACLMessage message) {
         if (state == States.IDLE) {
             ACLMessage reply = message.createReply();
             reply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
             reply.setContent("as");
             send(reply);
             this.state = States.ACTIVE;
-            System.out.println(""+this.getName()+"Started working");
+            System.out.println(""+this.getName()+" Started working");
             System.out.println("Accepted proposal from " + message.getSender().getName());
-            return true;
         } else {
             System.out.println("Ignoring proposal from " + message.getSender().getName() + " as the agent is not active");
-            return false;
         }
     }
 
     @Override
     protected void setup() {
-
-        this.state = States.IDLE; //It must be idle initially
-
-        // REGISTERING THE TRANSPORT AGENTS TO DF
-
         System.out.println("Hello! Transport-Agent "+getAID().getName()+" is ready.");
 
         DFAgentDescription agentDescription = new DFAgentDescription();
@@ -44,6 +53,7 @@ public class TransportAgent extends Agent {
         ServiceDescription serviceDescription = new ServiceDescription();
         serviceDescription.setType("TransportAgent");
         serviceDescription.setName(getLocalName() + "-TransportAgent");
+
         agentDescription.addServices(serviceDescription);
 
         try {
@@ -51,8 +61,6 @@ public class TransportAgent extends Agent {
         } catch (FIPAException e) {
             e.printStackTrace();
         }
-
-        //RECEIVING MESSAGES
 
         addBehaviour(new CyclicBehaviour(this) {
             @Override
@@ -65,13 +73,23 @@ public class TransportAgent extends Agent {
                             break;
                         case ACLMessage.REQUEST:
                             System.out.println(""+rcv.getContent()+"");
-
                     }
                 }
                 block();
             }
         });
 
+        addBehaviour(new TickerBehaviour(this, 1000) { // checks 1s
+            @Override
+            public void onTick() {
+                if (state == States.IDLE && random.nextDouble() < probability) { // has to change to States.Active
+                    state = States.BROKEN;
+                    System.out.println(getName() + " has broken down");
+                }
+//                else{
+//                    System.out.println(getName() + " has not broken down");
+//                }
+            }
+        });
     }
-
 }
