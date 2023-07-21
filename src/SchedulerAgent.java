@@ -35,7 +35,6 @@ public class SchedulerAgent extends Agent {
                         System.out.println(""+rcv.getContent()+"");
                         idleAgents.remove(rcv.getSender());
                         activeAgents.add(rcv.getSender());
-
                     }
                     block();
                 }

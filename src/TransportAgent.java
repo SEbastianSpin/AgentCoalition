@@ -1,6 +1,7 @@
 import jade.core.Agent;
 import jade.core.behaviours.*;
 import jade.domain.DFService;
+import jade.domain.FIPAAgentManagement.Property;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
@@ -11,15 +12,39 @@ enum States{
     IDLE,
     BROKEN
 }
+
+
 public class TransportAgent extends Agent {
     public States state;
+
+    public void setState(States newState) { //Will be used to change the state of agent
+        this.state = newState;
+
+        // Update the property value whenever the state changes
+        DFAgentDescription dfd = new DFAgentDescription();
+        dfd.setName(getAID());
+
+        // Create a new service description with the updated state property
+        ServiceDescription serviceDescription = new ServiceDescription();
+        serviceDescription.setType("TransportAgent");
+        serviceDescription.setName(getLocalName() + "-TransportAgent");
+        serviceDescription.addProperties(new Property("Status", this.state));
+        dfd.addServices(serviceDescription);
+
+        try {
+            DFService.modify(this, dfd);
+        } catch (FIPAException fe) {
+            fe.printStackTrace();
+        }
+    }
+
     private boolean handleProposeMessage(ACLMessage message) { //This handler check if transport agent is free for task assignment
         if (state == States.IDLE) {
             ACLMessage reply = message.createReply();
             reply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
             reply.setContent("as");
             send(reply);
-            this.state = States.ACTIVE;
+            setState(States.ACTIVE);
             System.out.println(""+this.getName()+"Started working");
             System.out.println("Accepted proposal from " + message.getSender().getName());
             return true;
@@ -32,7 +57,7 @@ public class TransportAgent extends Agent {
     @Override
     protected void setup() {
 
-        this.state = States.IDLE; //It must be idle initially
+        setState(States.IDLE);; //It must be idle initially
 
         // REGISTERING THE TRANSPORT AGENTS TO DF
 
@@ -44,6 +69,7 @@ public class TransportAgent extends Agent {
         ServiceDescription serviceDescription = new ServiceDescription();
         serviceDescription.setType("TransportAgent");
         serviceDescription.setName(getLocalName() + "-TransportAgent");
+        serviceDescription.addProperties(new Property("Status",this.state));
         agentDescription.addServices(serviceDescription);
 
         try {
