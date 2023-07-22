@@ -2,6 +2,7 @@ import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.*;
 import jade.domain.DFService;
+import jade.domain.FIPAAgentManagement.Property;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
@@ -54,11 +55,10 @@ public class SchedulerAgent extends Agent {
         }
         System.out.println("Hello! Scheduler-agent " + getAID().getName() + " is ready.");
 
-        idleAgents = new ArrayList<>();
-
         DFAgentDescription template = new DFAgentDescription();
         ServiceDescription sd = new ServiceDescription();
         sd.setType("TransportAgent");
+        sd.addProperties(new Property("Status",States.IDLE)); // Filtering only IDLE agents
 
         template.addServices(sd);
 

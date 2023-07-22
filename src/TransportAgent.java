@@ -57,7 +57,7 @@ public class TransportAgent extends Agent {
     @Override
     protected void setup() {
 
-        setState(States.IDLE);; //It must be idle initially
+        this.state= States.IDLE; //It must be idle initially
 
         // REGISTERING THE TRANSPORT AGENTS TO DF
 
