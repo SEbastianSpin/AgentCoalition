@@ -7,6 +7,7 @@ import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import java.util.ArrayList;
+import java.util.Queue;
 
 
 import static java.lang.Thread.sleep;
@@ -15,11 +16,19 @@ public class SchedulerAgent extends Agent {
     private ArrayList<AID> idleAgents = new ArrayList<AID>();
     private ArrayList<AID> activeAgents = new ArrayList<AID>();
 
+    private Queue Task;
+
+    public SchedulerAgent(Queue<PackageTask> packageTaskQueue) {
+        Task=packageTaskQueue;
+    }
+
 
     private void assignTask(){
 
         if(idleAgents.isEmpty()){
             System.out.println("There is no available Transport agents for task assignment");
+            System.out.println("I have this tasks");
+            System.out.println(Task);
         }
         for(AID idleAgent : idleAgents){
             ACLMessage assignment = new ACLMessage(ACLMessage.PROPOSE);
