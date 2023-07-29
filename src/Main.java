@@ -8,6 +8,7 @@ import jade.wrapper.*;
 import java.util.ArrayDeque;
 import java.util.Queue;
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -36,7 +37,7 @@ public class Main {
     }
 
 
-    public static void createAgents(int Transportagents, Queue packageTaskQueue){
+    public static void createAgents(int Transportagents, Queue packageTaskQueue, ConcurrentHashMap factoryMap){
         String[] guiArgs = {""};
 
         jade.Boot.main(guiArgs);
@@ -48,7 +49,7 @@ public class Main {
 
 
         SchedulerAgent schedulerAgent = new SchedulerAgent(packageTaskQueue);
-        TransportAgent  carrier= new TransportAgent();
+        TransportAgent  carrier= new TransportAgent(factoryMap);
         try {
             AgentController schedulerController = container.acceptNewAgent("SchedulerAgent", schedulerAgent);
             AgentController TransportController = container.acceptNewAgent("DHL1", carrier);
@@ -65,10 +66,34 @@ public class Main {
         Random random = new Random();
 
 
+        ConcurrentHashMap<Integer, ConcurrentHashMap<Integer, String>> factoryMap =
+                new ConcurrentHashMap<>();
+
+
+        // Initialize the map
+        for (int i = 0; i < 10; i++) {
+            factoryMap.put(i, new ConcurrentHashMap<>());
+            for (int j = 0; j < 10; j++) {
+                factoryMap.get(i).put(j, "Cell " + i + "," + j);
+            }
+        }
+
+        // Access the map
+        factoryMap.get(5).put(7, "new value");
+
+// Shows Map
+        //        for (int i = 0; i < map.size(); i++) {  see Map
+//            for (int j = 0; j < map.get(i).size(); j++) {
+//                System.out.print(map.get(i).get(j) + "\t");
+//            }
+//            System.out.println();
+//        }
+
+
         Queue<PackageTask> packageTaskQueue = generatePackageTasks(3);
 
         System.out.println(packageTaskQueue);
-        createAgents(4,packageTaskQueue);
+        createAgents(4,packageTaskQueue,factoryMap);
 
         ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
         executor.scheduleAtFixedRate(() -> {

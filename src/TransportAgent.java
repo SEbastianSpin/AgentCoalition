@@ -7,6 +7,7 @@ import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 enum States{
     ACTIVE,
@@ -22,11 +23,14 @@ public class TransportAgent extends Agent {
     private double probability; // probability of breaking down
     private Random random;
 
-    public TransportAgent(){
+    private ConcurrentHashMap<Integer, ConcurrentHashMap<Integer, String>> map;
+
+    public TransportAgent(ConcurrentHashMap factoryMap){
         this.state = States.IDLE; //It must be idle initially
         this.id = nextId++;
         this.probability = 0.5; // probability of breaking down
         this.random = new Random();
+        map= factoryMap;
     }
 
     private void handleProposeMessage(ACLMessage message) {
@@ -46,6 +50,9 @@ public class TransportAgent extends Agent {
     @Override
     protected void setup() {
         System.out.println("Hello! Transport-Agent "+getAID().getName()+" is ready.");
+
+
+
 
         DFAgentDescription agentDescription = new DFAgentDescription();
         agentDescription.setName(getAID());
