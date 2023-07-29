@@ -8,6 +8,10 @@ import jade.wrapper.*;
 import java.util.ArrayDeque;
 import java.util.Queue;
 import java.util.Random;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
 
@@ -33,7 +37,7 @@ public class Main {
 
 
     public static void createAgents(int Transportagents, Queue packageTaskQueue){
-        String[] guiArgs = {"-gui"};
+        String[] guiArgs = {""};
 
         jade.Boot.main(guiArgs);
         Runtime rt = Runtime.instance();
@@ -61,13 +65,17 @@ public class Main {
         Random random = new Random();
 
 
-        Queue<PackageTask> packageTaskQueue = generatePackageTasks(2);
+        Queue<PackageTask> packageTaskQueue = generatePackageTasks(3);
 
         System.out.println(packageTaskQueue);
-
-        System.out.println(packageTaskQueue);
-
         createAgents(4,packageTaskQueue);
+
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+        executor.scheduleAtFixedRate(() -> {
+            Queue<PackageTask> newTasks = generatePackageTasks(1);
+            packageTaskQueue.addAll(newTasks);
+            //System.out.println("New tasks added: " + newTasks);
+        }, 5, 5, TimeUnit.SECONDS);
 
 
 

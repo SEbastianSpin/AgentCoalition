@@ -31,6 +31,7 @@ public class SchedulerAgent extends Agent {
             System.out.println(Task);
         }
         for(AID idleAgent : idleAgents){
+
             ACLMessage assignment = new ACLMessage(ACLMessage.PROPOSE);
             assignment.addReceiver(idleAgent);
             assignment.setContent("take the task "+idleAgent+"");
@@ -39,6 +40,7 @@ public class SchedulerAgent extends Agent {
             addBehaviour(new CyclicBehaviour(this) {
                 @Override
                 public void action() {
+
                     ACLMessage rcv = receive();
                     if (rcv != null && rcv.getPerformative() == ACLMessage.ACCEPT_PROPOSAL) {
                         System.out.println(""+rcv.getContent()+"");
@@ -82,6 +84,13 @@ public class SchedulerAgent extends Agent {
             e.printStackTrace();
         }
         assignTask();
+// Used to  check in new task are reflected
+//        addBehaviour(new TickerBehaviour(this, 5000) {
+//            protected void onTick() {
+//                System.out.println("Current tasks: ");
+//                System.out.println(Task);
+//            }
+//        });
 
     }
 
