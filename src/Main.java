@@ -34,11 +34,14 @@ public class Main {
 
     public static void createAgents(int Transportagents, Queue packageTaskQueue){
         String[] guiArgs = {"-gui"};
+
         jade.Boot.main(guiArgs);
-        Runtime runtime = Runtime.instance();
+        Runtime rt = Runtime.instance();
         Profile profile = new ProfileImpl();
-        AgentContainer container = runtime.createMainContainer(profile);
-       // AgentController agentController =
+        profile.setParameter(Profile.GUI, "true"); // Enable the GUI
+        AgentContainer container = rt.createMainContainer(profile);
+
+
 
         SchedulerAgent schedulerAgent = new SchedulerAgent(packageTaskQueue);
         TransportAgent  carrier= new TransportAgent();
