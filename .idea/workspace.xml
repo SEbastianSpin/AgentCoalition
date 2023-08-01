@@ -5,9 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="fb689d7a-f5f6-4e6e-87df-88837e303b20" name="Changes" comment="I added transport agent status as a property so that we are able to follow the status of the agent by DF. Furthermore, I had to change the way of assigning the state of transport agent (instead of this.state=States.IDLE etc. I created setter method) thus we are able to make the changes dyanmically on the status.">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/APDescription.txt" beforeDir="false" afterPath="$PROJECT_DIR$/APDescription.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MTPs-Main-Container.txt" beforeDir="false" afterPath="$PROJECT_DIR$/MTPs-Main-Container.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/SchedulerAgent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SchedulerAgent.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/TransportAgent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/TransportAgent.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/agents/Scheduler/Scheduler.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/agents/Status/StatusAgent.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/agents/Transport/TransportAgent.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,6 +36,9 @@
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectId" id="2QCqW8m8TsaPGfawEDakN77E1Uv" />
   <component name="ProjectViewState">
@@ -53,10 +63,9 @@
   }
 }</component>
   <component name="RunManager">
-    <configuration name="Boot" type="Application" factoryName="Application" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="jade.Boot" />
+    <configuration name="Main" type="Application" factoryName="Application" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="Main" />
       <module name="ProjectWorking" />
-      <option name="PROGRAM_PARAMETERS" value="-gui carrier1:TransportAgent();carrier2:TransportAgent();carrier3:TransportAgent();Scheduler:SchedulerAgent" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -74,6 +83,16 @@
       <workItem from="1684959779979" duration="1153000" />
       <workItem from="1689759525815" duration="1297000" />
       <workItem from="1689976066824" duration="6219000" />
+      <workItem from="1690012726983" duration="843000" />
+      <workItem from="1690304791543" duration="1414000" />
+      <workItem from="1690306773721" duration="1361000" />
+      <workItem from="1690385180591" duration="3166000" />
+      <workItem from="1690388459614" duration="2773000" />
+      <workItem from="1690391269792" duration="887000" />
+      <workItem from="1690639733064" duration="4427000" />
+      <workItem from="1690732124558" duration="254000" />
+      <workItem from="1690807329226" duration="5569000" />
+      <workItem from="1690903626163" duration="3701000" />
     </task>
     <task id="LOCAL-00001" summary="Some small changes">
       <created>1689759906413</created>
@@ -89,7 +108,14 @@
       <option name="project" value="LOCAL" />
       <updated>1689980762673</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="I added transport agent status as a property so that we are able to follow the status of the agent by DF. Furthermore, I had to change the way of assigning the state of transport agent (instead of this.state=States.IDLE etc. I created setter method) thus we are able to make the changes dyanmically on the status.">
+      <created>1690012899270</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1690012899270</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
