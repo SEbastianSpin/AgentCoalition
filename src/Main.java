@@ -81,13 +81,12 @@ public class Main {
         // Access the map
         factoryMap.get(5).put(7, "new value");
 
-// Shows Map
-        //        for (int i = 0; i < map.size(); i++) {  see Map
-//            for (int j = 0; j < map.get(i).size(); j++) {
-//                System.out.print(map.get(i).get(j) + "\t");
-//            }
-//            System.out.println();
-//        }
+        for (int i = 0; i < map.size(); i++) {
+            for (int j = 0; j < map.get(i).size(); j++) {
+                System.out.print(map.get(i).get(j) + "\t");
+                }
+                    System.out.println();
+        }
 
 
         Queue<PackageTask> packageTaskQueue = generatePackageTasks(3);

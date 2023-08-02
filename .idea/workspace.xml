@@ -4,17 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fb689d7a-f5f6-4e6e-87df-88837e303b20" name="Changes" comment="I added transport agent status as a property so that we are able to follow the status of the agent by DF. Furthermore, I had to change the way of assigning the state of transport agent (instead of this.state=States.IDLE etc. I created setter method) thus we are able to make the changes dyanmically on the status.">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="fb689d7a-f5f6-4e6e-87df-88837e303b20" name="Changes" comment="Combined with Sebastian's code. Much cleaner scheduler and transportagents. 2 types of agents are created that are inherited from TransportAgent. DF has 2 service for repair and carrying package. Lists for idleAgents and activeAgents removed from scheduler everything is done by DF.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/APDescription.txt" beforeDir="false" afterPath="$PROJECT_DIR$/APDescription.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MTPs-Main-Container.txt" beforeDir="false" afterPath="$PROJECT_DIR$/MTPs-Main-Container.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/SchedulerAgent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SchedulerAgent.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/TransportAgent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/TransportAgent.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/agents/Scheduler/Scheduler.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/agents/Status/StatusAgent.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/agents/Transport/TransportAgent.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -92,7 +88,9 @@
       <workItem from="1690639733064" duration="4427000" />
       <workItem from="1690732124558" duration="254000" />
       <workItem from="1690807329226" duration="5569000" />
-      <workItem from="1690903626163" duration="3701000" />
+      <workItem from="1690903626163" duration="4177000" />
+      <workItem from="1690908110752" duration="899000" />
+      <workItem from="1690997654769" duration="1003000" />
     </task>
     <task id="LOCAL-00001" summary="Some small changes">
       <created>1689759906413</created>
@@ -115,7 +113,14 @@
       <option name="project" value="LOCAL" />
       <updated>1690012899270</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Combined with Sebastian's code. Much cleaner scheduler and transportagents. 2 types of agents are created that are inherited from TransportAgent. DF has 2 service for repair and carrying package. Lists for idleAgents and activeAgents removed from scheduler everything is done by DF.">
+      <created>1690907793515</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1690907793515</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -124,6 +129,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Some small changes" />
     <MESSAGE value="I added transport agent status as a property so that we are able to follow the status of the agent by DF. Furthermore, I had to change the way of assigning the state of transport agent (instead of this.state=States.IDLE etc. I created setter method) thus we are able to make the changes dyanmically on the status." />
-    <option name="LAST_COMMIT_MESSAGE" value="I added transport agent status as a property so that we are able to follow the status of the agent by DF. Furthermore, I had to change the way of assigning the state of transport agent (instead of this.state=States.IDLE etc. I created setter method) thus we are able to make the changes dyanmically on the status." />
+    <MESSAGE value="Combined with Sebastian's code. Much cleaner scheduler and transportagents. 2 types of agents are created that are inherited from TransportAgent. DF has 2 service for repair and carrying package. Lists for idleAgents and activeAgents removed from scheduler everything is done by DF." />
+    <option name="LAST_COMMIT_MESSAGE" value="Combined with Sebastian's code. Much cleaner scheduler and transportagents. 2 types of agents are created that are inherited from TransportAgent. DF has 2 service for repair and carrying package. Lists for idleAgents and activeAgents removed from scheduler everything is done by DF." />
   </component>
 </project>

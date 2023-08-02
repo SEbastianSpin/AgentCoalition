@@ -23,7 +23,6 @@ public class TransportAgent extends Agent {
     protected States state;
     private double probability; // probability of breaking down
     private Random random;
-
     private ConcurrentHashMap<Integer, ConcurrentHashMap<Integer, String>> map;
 
     public TransportAgent(ConcurrentHashMap factoryMap){

@@ -33,7 +33,7 @@ public class SchedulerAgent extends Agent {
             //When the program stars Scheduler agent search for all agents and save them in idleAgents list to be used.
             template.addServices(sd);
             result = DFService.search(this, template);
-//          for (DFAgentDescription dfad : result) { /it will be used in fututre
+//          for (DFAgentDescription dfad : result) { /it will be used in future
 //
 //          }
 
