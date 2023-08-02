@@ -1,4 +1,5 @@
 
+import agents.MapWebSocketHandler;
 import jade.core.Agent;
 import jade.core.Runtime;
 import jade.core.Profile;
@@ -15,6 +16,10 @@ import java.util.concurrent.TimeUnit;
 
 import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.websocket.api.annotations.WebSocket;
+import org.eclipse.jetty.websocket.server.WebSocketHandler;
+import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 
 
 public class Main {
@@ -61,7 +66,7 @@ public class Main {
 
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         System.out.println("Hello world!");
         Random random = new Random();
 
@@ -100,7 +105,19 @@ public class Main {
             Queue<PackageTask> newTasks = generatePackageTasks(1);
             packageTaskQueue.addAll(newTasks);
             //System.out.println("New tasks added: " + newTasks);
+            MapWebSocketHandler.broadcastMap(factoryMap);
         }, 5, 5, TimeUnit.SECONDS);
+
+
+
+        Server server = new Server(8080);
+        server.setHandler(new WebSocketHandler() {
+            @Override
+            public void configure(WebSocketServletFactory factory) {
+                factory.register(MapWebSocketHandler.class);
+            }
+        });
+        server.start();
 
 
 
