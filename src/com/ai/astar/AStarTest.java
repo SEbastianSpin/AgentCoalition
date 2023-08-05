@@ -25,10 +25,10 @@ public class AStarTest {
         profile.setParameter(Profile.GUI, "true"); // Enable the GUI
         AgentContainer container = rt.createMainContainer(profile);
         for (int i = 0; i < agents; i++) {
-            int startX =  i;
-            int startY = 0;
-            int goalX = 0;
-            int goalY = i;
+            int startX =  0;
+            int startY = i;
+            int goalX = agents - 1;
+            int goalY = agents - i - 1;
             try {
 
                 TransportAgent agent = new TransportAgent(i, pf, startX, startY, goalX, goalY);
@@ -41,10 +41,10 @@ public class AStarTest {
         }
     }
     public static void main(String[] args){
-        int rows = 3;
-        int cols = 3;
+        int rows = 6;
+        int cols = 6;
         AStar aStar = new AStar(rows, cols);
-        createAgents(3, aStar);
+        createAgents(5, aStar);
 
     }
 }

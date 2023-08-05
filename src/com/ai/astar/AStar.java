@@ -35,6 +35,7 @@ public class AStar {
             }
         });
         this.closedSet = new HashSet<>();
+        initializeNodes();
     }
     public AStar(int rows, int cols, Node initialNode, Node finalNode, int hvCost, int diagonalCost) {
         lock = new ReentrantLock();
@@ -49,6 +50,7 @@ public class AStar {
                 return Integer.compare(node0.getF(), node1.getF());
             }
         });
+        initializeNodes();
         setNodes();
         this.closedSet = new HashSet<>();
     }
@@ -57,12 +59,26 @@ public class AStar {
         this(rows, cols, initialNode, finalNode, DEFAULT_HV_COST, DEFAULT_DIAGONAL_COST);
     }
 
-    private void setNodes() {
+    /**
+     * @brief Initializes search area with nodes
+     */
+    private void initializeNodes()
+    {
         for (int i = 0; i < searchArea.length; i++) {
             for (int j = 0; j < searchArea[0].length; j++) {
                 Node node = new Node(i, j);
-                node.calculateHeuristic(getFinalNode());
                 this.searchArea[i][j] = node;
+            }
+        }
+    }
+
+    /**
+     * @brief Sets the heuristics for each node based on the search area
+     */
+    private void setNodes() {
+        for(int i = 0; i < searchArea.length; i++) {
+            for (int j = 0; j < searchArea[0].length; j++) {
+                this.searchArea[i][j].calculateHeuristic(getFinalNode());
             }
         }
     }
@@ -185,20 +201,26 @@ public class AStar {
     public int[] move(int startX, int startY, int goalX, int goalY, String value)
     {
         lock.lock();
+        openList.clear();
+        closedSet.clear();
         initialNode.setRow(startY);
         initialNode.setCol(startX);
         finalNode.setRow(goalY);
         finalNode.setCol(goalX);
         setNodes();
+        int[] nextPos;
         List<Node> path = findPath();
-        Node next = path.get(1);
-        int[] nextPos = {next.getCol(), next.getRow()};
-        next.setBlock(true);
-        next.setValue(value);
-        this.searchArea[nextPos[0]][nextPos[1]] = next;
-        this.searchArea[startX][startY].setBlock(false);
-        openList.clear();
-        closedSet.clear();
+        //path found
+        if(!path.isEmpty()) {
+            Node next = path.get(1);
+            nextPos = new int[]{next.getRow(), next.getCol()};
+            next.setBlock(true);
+            next.setValue(value);
+            this.searchArea[nextPos[0]][nextPos[1]] = next;
+            this.searchArea[startX][startY].setBlock(false);
+        }
+        else //no path found
+            nextPos = new int[]{startY, startX};
         lock.unlock();
         return nextPos;
     }

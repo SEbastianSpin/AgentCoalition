@@ -9,13 +9,9 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/APDescription.txt" beforeDir="false" afterPath="$PROJECT_DIR$/APDescription.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MTPs-Main-Container.txt" beforeDir="false" afterPath="$PROJECT_DIR$/MTPs-Main-Container.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/DStarLiteJava" beforeDir="false" afterPath="$PROJECT_DIR$/src/DStarLiteJava" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/DStarLiteJava/DStarLite.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/DStarLiteJava/DStarLite.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/DStarLiteJava/Pair.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/DStarLiteJava/Pair.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/DStarLiteJava/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/src/DStarLiteJava/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/DStarLiteJava/State.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/DStarLiteJava/State.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Main/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/agents/Transport/TransportAgent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/agents/Transport/TransportAgent.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/ai/astar/AStar.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/ai/astar/AStar.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/ai/astar/AStarTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/ai/astar/AStarTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/ai/astar/TransportAgent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/ai/astar/TransportAgent.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,7 +47,20 @@
     &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;
   }
 }</component>
-  <component name="RunManager" selected="Application.Main.Main">
+  <component name="RunManager" selected="Application.AStarTest">
+    <configuration name="AStarTest" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.ai.astar.AStarTest" />
+      <module name="AgentCoalition" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.ai.astar.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="Main" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="jade.Boot" />
       <module name="AgentCoalition" />
@@ -77,10 +86,12 @@
     </configuration>
     <list>
       <item itemvalue="Application.Main" />
+      <item itemvalue="Application.AStarTest" />
       <item itemvalue="Application.Main.Main" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.AStarTest" />
         <item itemvalue="Application.Main.Main" />
       </list>
     </recent_temporary>
@@ -103,6 +114,11 @@
           <url>file://$PROJECT_DIR$/src/agents/Transport/TransportAgent.java</url>
           <line>107</line>
           <option name="timeStamp" value="7" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/com/ai/astar/AStar.java</url>
+          <line>214</line>
+          <option name="timeStamp" value="10" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

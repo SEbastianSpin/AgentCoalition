@@ -28,8 +28,8 @@ public class TransportAgent extends Agent {
     }
     private void printPath()
     {
-        System.out.println("ID: " + id + "\nCurrent pos: {" + curX + ", " + curY + "}\n" +
-                "Goal pos: {" + goalX + ", " + goalY + "}\n" );
+        System.out.println("ID: " + id + "\nCurrent pos: (" + curX + ", " + curY + ")\n" +
+                "Goal pos: (" + goalX + ", " + goalY + ")\n" );
 
     }
 
@@ -48,8 +48,8 @@ public class TransportAgent extends Agent {
             else
             {
                 int[] cur = pf.move(curX, curY, goalX, goalY, String.valueOf(id));
-                curX = cur[0];
-                curY = cur[1];
+                curX = cur[1];
+                curY = cur[0];
                 printPath();
             }
         }
