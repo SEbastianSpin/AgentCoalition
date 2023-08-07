@@ -9,8 +9,10 @@
       <change beforePath="$PROJECT_DIR$/APDescription.txt" beforeDir="false" afterPath="$PROJECT_DIR$/APDescription.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MTPs-Main-Container.txt" beforeDir="false" afterPath="$PROJECT_DIR$/MTPs-Main-Container.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/PackageTransporter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/PackageTransporter.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/SchedulerAgent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SchedulerAgent.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/TransportAgent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/TransportAgent.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/ai/astar/TransportAgent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/ai/astar/TransportAgent.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -90,7 +92,9 @@
       <workItem from="1690807329226" duration="5569000" />
       <workItem from="1690903626163" duration="4177000" />
       <workItem from="1690908110752" duration="899000" />
-      <workItem from="1690997654769" duration="1003000" />
+      <workItem from="1690997654769" duration="3419000" />
+      <workItem from="1691150036727" duration="9316000" />
+      <workItem from="1691418797068" duration="3096000" />
     </task>
     <task id="LOCAL-00001" summary="Some small changes">
       <created>1689759906413</created>
@@ -120,7 +124,14 @@
       <option name="project" value="LOCAL" />
       <updated>1690907793515</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Combined with Sebastian's code. Much cleaner scheduler and transportagents. 2 types of agents are created that are inherited from TransportAgent. DF has 2 service for repair and carrying package. Lists for idleAgents and activeAgents removed from scheduler everything is done by DF.">
+      <created>1690998751935</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1690998751935</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
