@@ -7,8 +7,10 @@ import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
-import java.util.ArrayList;
+
+import java.io.Console;
 import java.util.Queue;
+import java.util.Random;
 
 
 import static java.lang.Thread.sleep;
@@ -16,11 +18,12 @@ import static java.lang.Thread.sleep;
 public class SchedulerAgent extends Agent {
     private Queue Task;
 
+
     public SchedulerAgent(Queue<PackageTask> packageTaskQueue) {
-        Task=packageTaskQueue;
+        Task = packageTaskQueue;
     }
 
-    private DFAgentDescription[] searchAgents(String dfSerivce,States state) { //When we need to assing more than 1 robot I will add No of agent parameter
+    private DFAgentDescription[] searchAgents(String dfSerivce, States state) { //When we need to assing more than 1 robot I will add No of agent parameter
 
         DFAgentDescription[] result = null;
 
@@ -44,51 +47,69 @@ public class SchedulerAgent extends Agent {
         return result;
     }
 
-    private void assignTask(){
-
-        DFAgentDescription[] idleAgents= searchAgents("PackageTransporter", States.IDLE);
-
-        if(idleAgents.length == 0){
-            System.out.println("There is no available Transport agents for task assignment");
-        }
-
-        else {
-            ACLMessage assignment = new ACLMessage(ACLMessage.PROPOSE);
-            for (DFAgentDescription idleAgent : idleAgents) {
-
-                AID agentAID = idleAgent.getName();
-                assignment.addReceiver(agentAID);
-                assignment.setContent("take the task " + idleAgent + "");
-                send(assignment);
-            }
-            addBehaviour(new CyclicBehaviour(this) {
-                @Override
-                public void action() {
-
-                    ACLMessage rcv = receive();
-                    if (rcv != null && rcv.getPerformative() == ACLMessage.ACCEPT_PROPOSAL) {
-                        System.out.println("" + rcv.getContent() + "");
+    private void listenAgents() {
+        addBehaviour(new CyclicBehaviour(this) {
+            @Override
+            public void action() {
+                ACLMessage rcv = receive();
+                if (rcv != null) {
+                    switch (rcv.getPerformative()) {
+                        case ACLMessage.INFORM:
+                            System.out.println(rcv.getSender() + " has done its assignment");
+                            break;
+                        case ACLMessage.ACCEPT_PROPOSAL:
+                            System.out.println("The task has been accepted by" + rcv.getSender());
+                            break;
                     }
-                    block();
                 }
-            });
+                block();
+            }
+        });
+
+    }
+
+    private void assignTask() {
+
+        DFAgentDescription[] idleAgents = searchAgents("PackageTransporter", States.IDLE);
+
+        if (idleAgents.length == 0) {
+            System.out.println("There is no available Transport agents for task assignment");
+        } else {
+
+
+            for (DFAgentDescription idleAgent : idleAgents) {
+                ACLMessage assignment = new ACLMessage(ACLMessage.PROPOSE);
+                AID agentAID = idleAgent.getName();
+                if (!Task.isEmpty()) {
+                    Task task = (Task) Task.poll();
+                    System.out.println("Origin - "+ task.origin[0][0]+","+task.origin[0][1] + ", Destination - " + task.destination[0][0]+","+task.destination[0][1]);
+                    assignment.setContent(task.origin[0][0]+","+task.origin[0][1] +","+ task.destination[0][0]+","+task.destination[0][1]);
+                    assignment.addReceiver(agentAID);
+                    //THE LOGIC FOR ASSIGNMENT OF PACKAGES CAN BE IMPLEMENTED SOMEWHERE HERE
+                    send(assignment);
+
+                } else {
+                    System.out.println("No tasks available to assign.");
+                    break;
+
+                }
+            }
         }
     }
 
 
+        @Override
+        protected void setup () {
 
-    @Override
-    protected void setup() {
+            try {
+                sleep(500);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            System.out.println("Hello! Scheduler-agent " + getAID().getName() + " is ready.");
 
-        try {
-            sleep(500);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            assignTask(); //We need to implement it in a message sending-receiving loop otherwise it will be working once
+            listenAgents();
         }
-        System.out.println("Hello! Scheduler-agent " + getAID().getName() + " is ready.");
-
-        assignTask(); //We need to implement it in a message sending-receiving loop otherwise it will be working once
 
     }
-
-}

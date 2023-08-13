@@ -5,10 +5,14 @@ import jade.domain.FIPAAgentManagement.Property;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
+
 import java.util.concurrent.ConcurrentHashMap;
+
+
 import static java.lang.Thread.sleep;
 
 public class PackageTransporter extends TransportAgent {
+
     public PackageTransporter(ConcurrentHashMap factoryMap) {
         super(factoryMap);
     }
@@ -30,14 +34,13 @@ public class PackageTransporter extends TransportAgent {
             reply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
             send(reply);
             setState(States.ACTIVE);
-            System.out.println(""+this.getName()+" Started working");
-            System.out.println("Accepted proposal from " + message.getSender().getName());
             onWork();
 
         } else {
             System.out.println("Ignoring proposal from " + message.getSender().getName() + " as the agent is not active");
         }
     }
+
 
     @Override
     protected void setup() {
@@ -66,6 +69,11 @@ public class PackageTransporter extends TransportAgent {
                 if (rcv != null) {
                     switch (rcv.getPerformative()) {
                         case ACLMessage.PROPOSE:
+                            String[] parts = rcv.getContent().split(",");
+                            int ox = Integer.parseInt(parts[0].trim());
+                            int oy = Integer.parseInt(parts[1].trim());
+                            int dx = Integer.parseInt(parts[2].trim());
+                            int dy = Integer.parseInt(parts[3].trim());
                             try {
                                 handleProposeMessage(rcv);
                             } catch (InterruptedException e) {
