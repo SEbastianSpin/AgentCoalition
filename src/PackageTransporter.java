@@ -1,3 +1,4 @@
+import com.ai.astar.AStar;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
@@ -9,8 +10,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import static java.lang.Thread.sleep;
 
 public class PackageTransporter extends TransportAgent {
-    public PackageTransporter(ConcurrentHashMap factoryMap) {
-        super(factoryMap);
+
+
+    public PackageTransporter(AStar pf, int startX, int startY, int goalX, int goalY) {
+        super(pf, startX, startY, goalX, goalY);
     }
 
     private void onWork() {

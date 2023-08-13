@@ -1,3 +1,4 @@
+import com.ai.astar.AStar;
 import jade.core.Agent;
 import jade.core.behaviours.*;
 import jade.domain.DFService;
@@ -10,6 +11,10 @@ import jade.lang.acl.ACLMessage;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
+
+import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
+
 enum States{
     ACTIVE,
     IDLE,
@@ -19,18 +24,29 @@ enum States{
 public class TransportAgent extends Agent {
 
     private static int nextId = 0;
+    public AStar pf;
     public int id;
+
+    int curX, curY, goalX, goalY, width, height;
+    ReentrantLock[][] locks;
+
+
     protected States state;
     private double probability; // probability of breaking down
     private Random random;
     private ConcurrentHashMap<Integer, ConcurrentHashMap<Integer, String>> map;
 
-    public TransportAgent(ConcurrentHashMap factoryMap){
+    public TransportAgent(AStar pf, int startX, int startY, int goalX, int goalY){
         this.state = States.IDLE; //It must be idle initially
         this.id = nextId++;
-        this.probability = 0.5; // probability of breaking down
+        this.probability = 0.01; // probability of breaking down
         this.random = new Random();
-        map= factoryMap;
+
+        this.pf = pf;
+        this.curX = startX;
+        this.curY = startY;
+        this.goalX = goalX;
+        this.goalY = goalY;
     }
 
     public void setState(States newState) { //Will be used to change the state of agent
@@ -68,5 +84,38 @@ public class TransportAgent extends Agent {
 //                }
             }
         });
+
+
+        addBehaviour(movementBehavior);
     }
+
+
+    private void printPath()
+    {
+        System.out.println("ID: " + id + "\nCurrent pos: (" + curX + ", " + curY + ")\n" +
+                "Goal pos: (" + goalX + ", " + goalY + ")\n" );
+
+    }
+
+    TickerBehaviour movementBehavior = new TickerBehaviour(this, 2000) {
+        public void onTick() {
+            if (curX == goalX && curY == goalY) {
+                stop();
+                takeDown();
+            }
+            else
+            {
+                int[] cur = pf.move(curX, curY, goalX, goalY, String.valueOf(id));
+                curX = cur[1];
+                curY = cur[0];
+                printPath();
+            }
+        }
+
+        public void takeDown()
+        {
+            System.out.println("Agent " + id + ": Destination reached");
+        }
+    };
+
 }
