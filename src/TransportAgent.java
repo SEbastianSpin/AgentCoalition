@@ -1,3 +1,4 @@
+import com.ai.astar.AStar;
 import jade.core.Agent;
 import jade.core.behaviours.*;
 import jade.domain.DFService;
@@ -5,10 +6,9 @@ import jade.domain.FIPAAgentManagement.Property;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
-import jade.lang.acl.ACLMessage;
-
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReentrantLock;
 
 enum States{
     ACTIVE,
@@ -19,18 +19,26 @@ enum States{
 public class TransportAgent extends Agent {
 
     private static int nextId = 0;
+    public AStar pf;
     public int id;
+
+    int curX, curY, width, height;
+    ReentrantLock[][] locks;
+
+
     protected States state;
     private double probability; // probability of breaking down
     private Random random;
     private ConcurrentHashMap<Integer, ConcurrentHashMap<Integer, String>> map;
 
-    public TransportAgent(ConcurrentHashMap factoryMap){
+    public TransportAgent(AStar pf, int X, int Y){
         this.state = States.IDLE; //It must be idle initially
         this.id = nextId++;
-        this.probability = 0.5; // probability of breaking down
+        this.probability = 0.01; // probability of breaking down
         this.random = new Random();
-        map= factoryMap;
+        this.pf = pf;
+        this.curX = X;
+        this.curY = Y;
     }
 
     public void setState(States newState) { //Will be used to change the state of agent
@@ -63,10 +71,14 @@ public class TransportAgent extends Agent {
                     state = States.BROKEN;
                     System.out.println(getName() + " has broken down");
                 }
-//                else{
-//                    System.out.println(getName() + " has not broken down");
-//                }
             }
         });
+
+
+
     }
+
+
+
+
 }

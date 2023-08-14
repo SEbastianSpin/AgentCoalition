@@ -7,10 +7,7 @@ import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
-
-import java.io.Console;
 import java.util.Queue;
-import java.util.Random;
 
 
 import static java.lang.Thread.sleep;
@@ -68,13 +65,15 @@ public class SchedulerAgent extends Agent {
 
     }
 
-    private void assignTask() {
+    private void assignTask(){
 
         DFAgentDescription[] idleAgents = searchAgents("PackageTransporter", States.IDLE);
 
         if (idleAgents.length == 0) {
             System.out.println("There is no available Transport agents for task assignment");
-        } else {
+
+        }
+        else {
 
 
             for (DFAgentDescription idleAgent : idleAgents) {
@@ -82,7 +81,7 @@ public class SchedulerAgent extends Agent {
                 AID agentAID = idleAgent.getName();
                 if (!Task.isEmpty()) {
                     Task task = (Task) Task.poll();
-                    System.out.println("Origin - "+ task.origin[0][0]+","+task.origin[0][1] + ", Destination - " + task.destination[0][0]+","+task.destination[0][1]);
+                    System.out.println("Package Origin - "+ task.origin[0][0]+","+task.origin[0][1] + ", Destination - " + task.destination[0][0]+","+task.destination[0][1]);
                     assignment.setContent(task.origin[0][0]+","+task.origin[0][1] +","+ task.destination[0][0]+","+task.destination[0][1]);
                     assignment.addReceiver(agentAID);
                     //THE LOGIC FOR ASSIGNMENT OF PACKAGES CAN BE IMPLEMENTED SOMEWHERE HERE
@@ -108,8 +107,10 @@ public class SchedulerAgent extends Agent {
             }
             System.out.println("Hello! Scheduler-agent " + getAID().getName() + " is ready.");
 
-            assignTask(); //We need to implement it in a message sending-receiving loop otherwise it will be working once
             listenAgents();
+            assignTask(); // MUST BE WORKING IN LOOP.
+
+
         }
 
     }
