@@ -1,4 +1,24 @@
 
+import jade.core.Agent;
+import jade.core.Runtime;
+import jade.core.Profile;
+import jade.core.ProfileImpl;
+import jade.wrapper.*;
+
+import java.util.ArrayDeque;
+import java.util.Queue;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
+import jade.wrapper.AgentContainer;
+import jade.wrapper.AgentController;
+import com.ai.astar.AStar;
+
+
+
 import agents.MapWebSocketHandler;
 import jade.core.Agent;
 import jade.core.Runtime;
@@ -42,7 +62,7 @@ public class Main {
     }
 
 
-    public static void createAgents(int Transportagents, Queue packageTaskQueue, ConcurrentHashMap factoryMap){
+    public static void createAgents(int Transportagents, Queue packageTaskQueue, AStar pf){
         String[] guiArgs = {""};
 
         jade.Boot.main(guiArgs);
@@ -54,72 +74,52 @@ public class Main {
 
 
         SchedulerAgent schedulerAgent = new SchedulerAgent(packageTaskQueue);
-        TransportAgent  carrier= new TransportAgent(factoryMap);
+
+        for (int i = 0; i < Transportagents; i++) {
+            int startX =  0;
+            int startY = i;
+            int goalX = Transportagents - 1;
+            int goalY = Transportagents - i - 1;
+            try {
+
+                TransportAgent agent = new TransportAgent( pf, startX, startY, goalX, goalY);
+                AgentController TransportController = container.acceptNewAgent("Transport" + i, agent);
+                TransportController.start();
+            }
+            catch (StaleProxyException e) {
+                e.printStackTrace();
+            }
+
         try {
             AgentController schedulerController = container.acceptNewAgent("SchedulerAgent", schedulerAgent);
-            AgentController TransportController = container.acceptNewAgent("DHL1", carrier);
             schedulerController.start();
-            TransportController.start();
         } catch (StaleProxyException e) {
             e.printStackTrace();
         }
 
+    };
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         System.out.println("Hello world!");
         Random random = new Random();
-
-
-        ConcurrentHashMap<Integer, ConcurrentHashMap<Integer, String>> factoryMap =
-                new ConcurrentHashMap<>();
-
-
-        // Initialize the map
-        for (int i = 0; i < 10; i++) {
-            factoryMap.put(i, new ConcurrentHashMap<>());
-            for (int j = 0; j < 10; j++) {
-                factoryMap.get(i).put(j, "Cell " + i + "," + j);
-            }
-        }
-
-        // Access the map
-        factoryMap.get(5).put(7, "new value");
-
-// Shows Map
-        //        for (int i = 0; i < map.size(); i++) {  see Map
-//            for (int j = 0; j < map.get(i).size(); j++) {
-//                System.out.print(map.get(i).get(j) + "\t");
-//            }
-//            System.out.println();
-//        }
-
+        int rows = 6;
+        int cols = 6;
+        AStar aStar = new AStar(rows, cols);
 
         Queue<PackageTask> packageTaskQueue = generatePackageTasks(3);
 
         System.out.println(packageTaskQueue);
-        createAgents(4,packageTaskQueue,factoryMap);
+        createAgents(4,packageTaskQueue,aStar);
 
         ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
         executor.scheduleAtFixedRate(() -> {
             Queue<PackageTask> newTasks = generatePackageTasks(1);
             packageTaskQueue.addAll(newTasks);
             //System.out.println("New tasks added: " + newTasks);
-            MapWebSocketHandler.broadcastMap(factoryMap);
         }, 5, 5, TimeUnit.SECONDS);
 
 
 
-        Server server = new Server(8080);
-        server.setHandler(new WebSocketHandler() {
-            @Override
-            public void configure(WebSocketServletFactory factory) {
-                factory.register(MapWebSocketHandler.class);
-            }
-        });
-        server.start();
 
-
-
-
-}}
+    }}
