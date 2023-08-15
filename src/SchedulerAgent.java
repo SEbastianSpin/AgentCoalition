@@ -20,7 +20,7 @@ public class SchedulerAgent extends Agent {
         Task = packageTaskQueue;
     }
 
-    private DFAgentDescription[] searchAgents(String dfSerivce, States state) { //When we need to assing more than 1 robot I will add No of agent parameter
+    private DFAgentDescription[] searchAgents(String dfSerivce, Status state) { //When we need to assign more than 1 robot I will add No of agent parameter
 
         DFAgentDescription[] result = null;
 
@@ -67,15 +67,12 @@ public class SchedulerAgent extends Agent {
 
     private void assignTask(){
 
-        DFAgentDescription[] idleAgents = searchAgents("PackageTransporter", States.IDLE);
+        DFAgentDescription[] idleAgents = searchAgents("PackageTransporter", Status.IDLE);
 
         if (idleAgents.length == 0) {
             System.out.println("There is no available Transport agents for task assignment");
-
         }
         else {
-
-
             for (DFAgentDescription idleAgent : idleAgents) {
                 ACLMessage assignment = new ACLMessage(ACLMessage.PROPOSE);
                 AID agentAID = idleAgent.getName();
@@ -86,11 +83,6 @@ public class SchedulerAgent extends Agent {
                     assignment.addReceiver(agentAID);
                     //THE LOGIC FOR ASSIGNMENT OF PACKAGES CAN BE IMPLEMENTED SOMEWHERE HERE
                     send(assignment);
-
-                } else {
-                    System.out.println("No tasks available to assign.");
-                    break;
-
                 }
             }
         }
@@ -99,16 +91,13 @@ public class SchedulerAgent extends Agent {
 
         @Override
         protected void setup () {
-
-            try {
-                sleep(500);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
             System.out.println("Hello! Scheduler-agent " + getAID().getName() + " is ready.");
-
-            listenAgents();
-            assignTask(); // MUST BE WORKING IN LOOP.
+            addBehaviour(new TickerBehaviour(this, 2000) {
+                public void onTick() {
+                    listenAgents();
+                    assignTask(); // MUST BE WORKING IN LOOP.
+                }
+            });
 
 
         }
