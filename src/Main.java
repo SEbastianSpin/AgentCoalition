@@ -1,4 +1,3 @@
-
 import jade.core.Agent;
 import jade.core.Runtime;
 import jade.core.Profile;
@@ -47,18 +46,13 @@ public class Main {
         profile.setParameter(Profile.GUI, "true"); // Enable the GUI
         AgentContainer container = rt.createMainContainer(profile);
 
-
-
-        SchedulerAgent schedulerAgent = new SchedulerAgent(packageTaskQueue);
-
         for (int i = 0; i < Transportagents; i++) {
             int startX =  0;
-            int startY = i;
-            int goalX = Transportagents - 1;
-            int goalY = Transportagents - i - 1;
+            int startY = i+1;
+
             try {
 
-                TransportAgent agent = new TransportAgent( pf, startX, startY, goalX, goalY);
+                PackageTransporter agent = new PackageTransporter(pf, startX, startY);
                 AgentController TransportController = container.acceptNewAgent("Transport" + i, agent);
                 TransportController.start();
             }
@@ -66,33 +60,32 @@ public class Main {
                 e.printStackTrace();
             }
 
-        try {
-            AgentController schedulerController = container.acceptNewAgent("SchedulerAgent", schedulerAgent);
-            schedulerController.start();
-        } catch (StaleProxyException e) {
-            e.printStackTrace();
-        }
+            SchedulerAgent schedulerAgent = new SchedulerAgent(packageTaskQueue);
+            try {
+                AgentController schedulerController = container.acceptNewAgent("SchedulerAgent", schedulerAgent);
+                schedulerController.start();
+            } catch (StaleProxyException e) {
+                e.printStackTrace();
+            }
 
-    };
+        };
     }
 
     public static void main(String[] args) {
         System.out.println("Hello world!");
         Random random = new Random();
-        int rows = 6;
-        int cols = 6;
+        int rows = 10;
+        int cols = 10;
         AStar aStar = new AStar(rows, cols);
-
         Queue<PackageTask> packageTaskQueue = generatePackageTasks(3);
 
         System.out.println(packageTaskQueue);
-        createAgents(4,packageTaskQueue,aStar);
-
-        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+        createAgents(5, packageTaskQueue,aStar);
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1); //Periodically adding new tasks
         executor.scheduleAtFixedRate(() -> {
             Queue<PackageTask> newTasks = generatePackageTasks(1);
             packageTaskQueue.addAll(newTasks);
-            //System.out.println("New tasks added: " + newTasks);
+         //   System.out.println("New tasks added: " + newTasks);
         }, 5, 5, TimeUnit.SECONDS);
 
 

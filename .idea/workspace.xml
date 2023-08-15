@@ -4,14 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fb689d7a-f5f6-4e6e-87df-88837e303b20" name="Changes" comment="For rebase">
-      <change afterPath="$PROJECT_DIR$/AgentCoalitionV8.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/jade.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/jade.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="478dbda8-0214-4038-b45d-971fadc6dd7a" name="Changes" comment="Combined with Sebastian's code. Much cleaner scheduler and transportagents. 2 types of agents are created that are inherited from TransportAgent. DF has 2 service for repair and carrying package. Lists for idleAgents and activeAgents removed from scheduler everything is done by DF.">
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/jade.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/APDescription.txt" beforeDir="false" afterPath="$PROJECT_DIR$/APDescription.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MTPs-Main-Container.txt" beforeDir="false" afterPath="$PROJECT_DIR$/MTPs-Main-Container.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/PackageTransporter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/PackageTransporter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/ai/astar/AStar.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/ai/astar/AStar.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -62,9 +63,8 @@
   "keyToString": {
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "C:/Users/Sebastian/Documents/SebasLab/AgentCoalitionV8/JADE-bin-4.6.0/jade/lib/jade.jar",
+    "last_opened_file_path": "C:/Users/Dipu Purecha/ubuntu/AgentCoalition/JADE-bin-4.6.0/jade/lib/jade.jar",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",

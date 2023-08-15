@@ -6,4 +6,6 @@ public class Package {
         this.weight = weight;
         this.id = id;
     }
+
+
 }
