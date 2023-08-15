@@ -216,7 +216,7 @@ public class AStar {
             next.setBlock(true);
             next.setValue(value);
             this.searchArea[nextPos[0]][nextPos[1]] = next;
-            this.searchArea[startX][startY].setBlock(false);
+            this.searchArea[startY][startX].setBlock(false);
         }
         else //no path found
             nextPos = new int[]{startY, startX};

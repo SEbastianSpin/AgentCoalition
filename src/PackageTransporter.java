@@ -1,3 +1,4 @@
+import com.ai.astar.Node;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.TickerBehaviour;
 import jade.domain.DFService;
@@ -27,9 +28,9 @@ public class PackageTransporter extends TransportAgent {
                 else
                 {
                     int[] cur = pf.move(curX, curY,goalX,goalY,String.valueOf(id));
+                    printMap();
                     curX = cur[1];
                     curY = cur[0];
-                    printPath(goalX,goalY);
                 }
             }
 
@@ -111,11 +112,33 @@ public class PackageTransporter extends TransportAgent {
 
     }
 
-    private void printPath(int goalX,int goalY)
+    private void printMap()
     {
-        System.out.println("ID: " + id + "\nCurrent pos: (" + curX + ", " + curY + ")\n" +
-                "Goal pos: (" + goalX + ", " + goalY + ")\n" );
-
+        Node[][] map = pf.getSearchArea();
+        StringBuilder mapStr = new StringBuilder();
+        for(int i = 0; i < map.length; i++)
+        {
+            mapStr.append("\n|");
+            for(int k = 0; k < map[0].length; k++)
+            {
+                mapStr.append("-----|");
+            }
+            mapStr.append("\n|");
+            for(int j = 0; j < map[0].length; j++)
+            {
+                mapStr.append("  ");
+                if(map[i][j].isBlock())
+                    mapStr.append(map[i][j].getValue());
+                else
+                    mapStr.append(" ");
+                mapStr.append("  |");
+            }
+        }
+        mapStr.append("\n|");
+        for(int k = 0; k < map[0].length; k++) {
+            mapStr.append("-----|");
+        }
+        System.out.println("\n\n" + mapStr);
     }
 
 }
