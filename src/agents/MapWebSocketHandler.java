@@ -18,6 +18,7 @@ public class MapWebSocketHandler {
     private Session session;
     private static final ConcurrentHashMap<Session, String> sessions = new ConcurrentHashMap<>();
 
+
     @OnWebSocketConnect
     public void onConnect(Session session) {
         this.session = session;
