@@ -1,23 +1,22 @@
 package agents;
-
+import com.ai.astar.Node;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 
+
 import java.io.IOException;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static agents.ToJason.toJson;
 
-
 @WebSocket
 public class MapWebSocketHandler {
 
-
     private Session session;
     private static final ConcurrentHashMap<Session, String> sessions = new ConcurrentHashMap<>();
-
 
     @OnWebSocketConnect
     public void onConnect(Session session) {
@@ -30,15 +29,16 @@ public class MapWebSocketHandler {
         sessions.remove(this.session);
     }
 
-    public static void broadcastMap(ConcurrentHashMap<Integer, ConcurrentHashMap<Integer, String>> map) {
+    public static void broadcastData(Node[][] astarArray,
+                                     Queue<PackageTask> packageTaskQueue) {
         sessions.keySet().forEach(session -> {
             try {
-                // Convert your map to JSON string here. This assumes you have a toJson() method
-                String jsonMap = toJson(map);
-                session.getRemote().sendString(jsonMap);
+                String jsonData = toJson(astarArray, packageTaskQueue);
+                session.getRemote().sendString(jsonData);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         });
     }
+
 }

@@ -1,3 +1,5 @@
+package agents;
+
 public class Task {
     protected int id;
     protected int[][] origin;

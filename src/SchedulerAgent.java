@@ -1,3 +1,4 @@
+import agents.PackageTask;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.*;
@@ -7,7 +8,7 @@ import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
-import java.util.ArrayList;
+
 import java.util.Queue;
 
 
@@ -22,7 +23,7 @@ public class SchedulerAgent extends Agent {
 
     private DFAgentDescription[] searchAgents(String dfSerivce,States state) { //When we need to assing more than 1 robot I will add No of agent parameter
 
-        DFAgentDescription[] result = null;
+        DFAgentDescription[] result = new DFAgentDescription[0];
 
         try {
 
@@ -32,7 +33,10 @@ public class SchedulerAgent extends Agent {
             sd.addProperties(new Property("Status", state)); // Filtering only IDLE agents
             //When the program stars Scheduler agent search for all agents and save them in idleAgents list to be used.
             template.addServices(sd);
+            System.out.println("HI");
             result = DFService.search(this, template);
+            System.out.println(result);
+            System.out.println("byeI");
 //          for (DFAgentDescription dfad : result) { /it will be used in future
 //
 //          }
@@ -48,7 +52,7 @@ public class SchedulerAgent extends Agent {
 
         DFAgentDescription[] idleAgents= searchAgents("PackageTransporter", States.IDLE);
 
-        if(idleAgents.length == 0){
+        if(idleAgents != null && idleAgents.length == 0){
             System.out.println("There is no available Transport agents for task assignment");
         }
 
