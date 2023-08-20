@@ -17,7 +17,7 @@ public class PackageTransporter extends TransportAgent {
     public PackageTransporter(AStar pf, int startX, int startY) {
         super(pf, startX, startY);
     }
-    private void onWork(int goalX,int goalY) {
+    private void onWork(int goalX,int goalY, int OriginX,int OriginY) {
 
         addBehaviour(new TickerBehaviour(this, 2000){
             public void onTick() {
@@ -25,6 +25,11 @@ public class PackageTransporter extends TransportAgent {
                     stop();
                     takeDown();
                 }
+                if (curX == OriginX && curY == OriginY) {
+                    stop();
+                    System.out.println("Agent " + id + ": Reached the origin.");
+                }
+
                 else
                 {
                     int[] cur = pf.move(curX, curY,goalX,goalY,String.valueOf(id));
@@ -60,7 +65,7 @@ public class PackageTransporter extends TransportAgent {
             reply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
             send(reply);
 
-            onWork(dx,dy); //It will send the information about where to leave the packages
+            onWork(dx,dy,ox, oy); //It will send the information about where to leave the packages
             setState(States.ACTIVE);
         } else {
             System.out.println("Ignoring proposal from " + message.getSender().getName() + " as the agent is not active");
