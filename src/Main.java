@@ -93,13 +93,13 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("Hello world!");
         Random random = new Random();
-        int rows = 3;
-        int cols = 3;
+        int rows = 6;
+        int cols = 6;
         AStar aStar = new AStar(rows, cols);
-        Queue<PackageTask> packageTaskQueue = generatePackageTasks(3, rows, cols);
+        Queue<PackageTask> packageTaskQueue = generatePackageTasks(2, rows, cols);
 
         System.out.println(packageTaskQueue);
-        createAgents(1, packageTaskQueue,aStar);
+        createAgents(8, packageTaskQueue,aStar);
         ScheduledExecutorService executorTasks = Executors.newScheduledThreadPool(1); //Periodically adding new tasks
         ScheduledExecutorService executorPrintMap = Executors.newScheduledThreadPool(1);
 
@@ -107,7 +107,7 @@ public class Main {
             Queue<PackageTask> newTasks = generatePackageTasks(1, rows, cols);
             packageTaskQueue.addAll(newTasks);
          //   System.out.println("New tasks added: " + newTasks);
-        }, 5, 1, TimeUnit.SECONDS);
+        }, 5, 5, TimeUnit.SECONDS);
 
         executorPrintMap.scheduleAtFixedRate(() -> {
             printMap(aStar);

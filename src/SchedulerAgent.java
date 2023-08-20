@@ -13,18 +13,27 @@ import java.util.*;
 
 import static java.lang.Thread.sleep;
 
+
+
+enum Statuss {
+    ACTIVE,
+    IDLE,
+    BROKEN
+}
+
 public class SchedulerAgent extends Agent {
     private Queue<PackageTask> Task;
 
     private Map<Integer, List<AID>> packageGroupMap = new HashMap<>(); // to track agents per package
+    private Map<Integer, Integer> agentsAtOriginCount = new HashMap<>();// // package id vs count of agents at origin
 
 
     public SchedulerAgent(Queue<PackageTask> packageTaskQueue) {
         Task = packageTaskQueue;
     }
 
-    private DFAgentDescription[] searchAgents(String dfSerivce, States state) { //When we need to assing more than 1 robot I will add No of agent parameter
-
+   // private DFAgentDescription[] searchAgents(String dfSerivce, States state) { //When we need to assing more than 1 robot I will add No of agent parameter
+   private DFAgentDescription[] searchAgents(String dfSerivce, Statuss state) {
         DFAgentDescription[] result = null;
 
         try {
@@ -32,7 +41,7 @@ public class SchedulerAgent extends Agent {
             DFAgentDescription template = new DFAgentDescription();
             ServiceDescription sd = new ServiceDescription();
             sd.setType(dfSerivce);
-            sd.addProperties(new Property("Status", state)); // Filtering only IDLE agents
+           // sd.addProperties(new Property("Status", state)); // Filtering only IDLE agents
             //When the program stars Scheduler agent search for all agents and save them in idleAgents list to be used.
             template.addServices(sd);
             result = DFService.search(this, template);
@@ -55,7 +64,27 @@ public class SchedulerAgent extends Agent {
                 if (rcv != null) {
                     switch (rcv.getPerformative()) {
                         case ACLMessage.INFORM:
-                            System.out.println(rcv.getSender() + " has done its assignment");
+
+                            String[] parts = rcv.getContent().split(",");
+                            String content = rcv.getContent();
+                            int agentTaskId = Integer.parseInt(parts[0].trim());//ox and oy can be used if the robot isnt near the box and wants go to it
+
+                            agentsAtOriginCount.put(agentTaskId, agentsAtOriginCount.getOrDefault(agentTaskId, 0) + 1);
+                            if(agentsAtOriginCount.get(agentTaskId) == packageGroupMap.get(agentTaskId).size()){
+
+//                                for(AID agent : packageGroupMap.get(agentTaskId)) {
+//                                    ACLMessage proceedMsg = new ACLMessage(ACLMessage.INSTRUCT);
+//                                    proceedMsg.addReceiver(agent);
+//                                    proceedMsg.setContent("Proceed to destination");
+//                                    send(proceedMsg);
+//                                }
+// ALSO that   packageGroupMap should be removed or something needs to be done
+                                System.out.println("For "+agentTaskId+" All agent reached Origin");
+
+                            }
+
+                            // Needs to be updates
+                            ///System.out.println(rcv.getSender() + " has done its assignment");
                             break;
                         case ACLMessage.ACCEPT_PROPOSAL:
                             System.out.println("The task has been accepted by" + rcv.getSender());
@@ -69,44 +98,79 @@ public class SchedulerAgent extends Agent {
     }
 
     private void assignTask(){
-            List<AID> groupAgents = new ArrayList<>();
-                    while (!Task.isEmpty()) {
+        addBehaviour(new TickerBehaviour(this, 2000) {  //2 seconds
+            @Override
+            protected void onTick() {
 
-                        DFAgentDescription[] idleAgents = searchAgents("PackageTransporter", States.IDLE);
-
-                        if (idleAgents.length == 0) {
-                            System.out.println("There is no available Transport agents for task assignment");
-
-                        }
-                        else {
+                List<AID> groupAgents = new ArrayList<>();
+                if (!Task.isEmpty()) {
+                    // DFAgentDescription[] idleAgents = searchAgents("PackageTransporter", States.IDLE);
+                    DFAgentDescription[] idleAgents = searchAgents("PackageTransporter", Statuss.IDLE);
+                    Queue<DFAgentDescription> idleAgentsQueue = new LinkedList<>(Arrays.asList(idleAgents));
 
 
-                        PackageTask task =Task.poll();
-                        if (idleAgents.length < task.getNumAgentsRequired()) {
+                    if (idleAgentsQueue.isEmpty()) {
+                        //System.out.println("There is no available Transport agents for task assignment");
+                    }
+                    else {
+                        PackageTask task =Task.poll(); // is removed
+                        if (idleAgentsQueue.size() < task.getNumAgentsRequired()) {
                             System.out.println("No agents available to assign.");
-                            break;
+                            Task.add(task); // It is not done so need to be placed back
                         } else {
-                            int groupcounter=0;
-                            while (groupAgents.size() < task.getNumAgentsRequired()) {
-                                groupAgents.add(idleAgents[groupcounter].getName());
-                                groupcounter++;
+                            while (groupAgents.size() < task.getNumAgentsRequired() && !idleAgentsQueue.isEmpty()) {
+                                groupAgents.add(idleAgentsQueue.poll().getName());
                             }
 
                             System.out.println("Task needs: "+ task.getNumAgentsRequired());
-                            System.out.println("Package Origin - "+ task.origin[0][0]+","+task.origin[0][1] + ", Destination - " + (task.destination[0][0]+1)+","+task.destination[0][1]);
-
+                            System.out.println("Package Origin - "+ task.origin[0][0]+","+task.origin[0][1] + ", Destination - " + (task.destination[0][0])+","+task.destination[0][1]
+                                            + "Task ID - " + task.id
+                                    );
+                            int adjust = 0;
                             for (AID groupAgent : groupAgents) {
+
+                                int xAdjust = 0, yAdjust = 0;
+
+                                switch (adjust) {
+                                    case 0:
+                                        // No adjustment for the first agent
+                                        xAdjust = 0;
+                                        yAdjust = 0;
+                                        break;
+                                    case 1:
+                                        xAdjust = 1;
+                                        yAdjust = 0;
+                                        break;
+                                    case 2:
+                                        xAdjust = 0;
+                                        yAdjust = 1;
+                                        break;
+                                    case 3:
+                                        xAdjust = 1;
+                                        yAdjust = 1;
+                                        break;
+                                }
+
                                 ACLMessage assignment = new ACLMessage(ACLMessage.PROPOSE);
-                                assignment.setContent(task.origin[0][0]+","+task.origin[0][1] +","+ task.destination[0][0]+","+task.destination[0][1]);
+                                assignment.setContent(
+                                        (task.origin[0][0] + xAdjust) + "," + (task.origin[0][1] + yAdjust) + "," +
+                                                task.destination[0][0] + "," + task.destination[0][1] + "," +
+                                                 task.id
+                                );
+                                adjust++;
                                 //THE LOGIC FOR ASSIGNMENT OF PACKAGES CAN BE IMPLEMENTED SOMEWHERE HERE
                                 assignment.addReceiver(groupAgent);
                                 send(assignment);
+                                adjust++;
                             }
                             packageGroupMap.put(task.id, groupAgents);
                             System.out.println(packageGroupMap);
 
 
-                    }
+
+            }}}}
+            });
+
             }
 
 //                 else {
@@ -115,8 +179,8 @@ public class SchedulerAgent extends Agent {
 //
 //                }
 
-        }
-    }
+
+
 
 
     @Override
