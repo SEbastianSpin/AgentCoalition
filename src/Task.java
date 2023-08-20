@@ -11,7 +11,9 @@ public class Task {
         this.destination = destination;
     }
 
-    // Constructor
+    int  getId(){return id;}
+
+    int[][] getOrigin() {return  origin;}
 
 
 

@@ -77,7 +77,7 @@ public class Main {
         int rows = 10;
         int cols = 10;
         AStar aStar = new AStar(rows, cols);
-        Queue<PackageTask> packageTaskQueue = generatePackageTasks(3);
+        Queue<PackageTask> packageTaskQueue = generatePackageTasks(1);
 
         System.out.println(packageTaskQueue);
         createAgents(5, packageTaskQueue,aStar);

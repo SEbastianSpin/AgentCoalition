@@ -7,13 +7,16 @@ import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
-import java.util.Queue;
+
+import java.util.*;
 
 
 import static java.lang.Thread.sleep;
 
 public class SchedulerAgent extends Agent {
-    private Queue Task;
+    private Queue<PackageTask> Task;
+
+    private Map<Integer, List<AID>> packageGroupMap = new HashMap<>(); // to track agents per package
 
 
     public SchedulerAgent(Queue<PackageTask> packageTaskQueue) {
@@ -66,51 +69,70 @@ public class SchedulerAgent extends Agent {
     }
 
     private void assignTask(){
+            List<AID> groupAgents = new ArrayList<>();
+                    while (!Task.isEmpty()) {
 
-        DFAgentDescription[] idleAgents = searchAgents("PackageTransporter", States.IDLE);
+                        DFAgentDescription[] idleAgents = searchAgents("PackageTransporter", States.IDLE);
 
-        if (idleAgents.length == 0) {
-            System.out.println("There is no available Transport agents for task assignment");
+                        if (idleAgents.length == 0) {
+                            System.out.println("There is no available Transport agents for task assignment");
 
-        }
-        else {
+                        }
+                        else {
 
 
-            for (DFAgentDescription idleAgent : idleAgents) {
-                ACLMessage assignment = new ACLMessage(ACLMessage.PROPOSE);
-                AID agentAID = idleAgent.getName();
-                if (!Task.isEmpty()) {
-                    Task task = (Task) Task.poll();
-                    System.out.println("Package Origin - "+ task.origin[0][0]+","+task.origin[0][1] + ", Destination - " + task.destination[0][0]+","+task.destination[0][1]);
-                    assignment.setContent(task.origin[0][0]+","+task.origin[0][1] +","+ task.destination[0][0]+","+task.destination[0][1]);
-                    assignment.addReceiver(agentAID);
-                    //THE LOGIC FOR ASSIGNMENT OF PACKAGES CAN BE IMPLEMENTED SOMEWHERE HERE
-                    send(assignment);
+                        PackageTask task =Task.poll();
+                        if (idleAgents.length < task.getNumAgentsRequired()) {
+                            System.out.println("No agents available to assign.");
+                            break;
+                        } else {
+                            int groupcounter=0;
+                            while (groupAgents.size() < task.getNumAgentsRequired()) {
+                                groupAgents.add(idleAgents[groupcounter].getName());
+                                groupcounter++;
+                            }
 
-                } else {
-                    System.out.println("No tasks available to assign.");
-                    break;
+                            System.out.println("Task needs: "+ task.getNumAgentsRequired());
+                            System.out.println("Package Origin - "+ task.origin[0][0]+","+task.origin[0][1] + ", Destination - " + (task.destination[0][0]+1)+","+task.destination[0][1]);
 
-                }
+                            for (AID groupAgent : groupAgents) {
+                                ACLMessage assignment = new ACLMessage(ACLMessage.PROPOSE);
+                                assignment.setContent(task.origin[0][0]+","+task.origin[0][1] +","+ task.destination[0][0]+","+task.destination[0][1]);
+                                //THE LOGIC FOR ASSIGNMENT OF PACKAGES CAN BE IMPLEMENTED SOMEWHERE HERE
+                                assignment.addReceiver(groupAgent);
+                                send(assignment);
+                            }
+                            packageGroupMap.put(task.id, groupAgents);
+                            System.out.println(packageGroupMap);
+
+
+                    }
             }
+
+//                 else {
+//                    System.out.println("No tasks available to assign.");
+//                    break;
+//
+//                }
+
         }
     }
 
 
-        @Override
-        protected void setup () {
+    @Override
+    protected void setup () {
 
-            try {
-                sleep(500);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            System.out.println("Hello! Scheduler-agent " + getAID().getName() + " is ready.");
-
-            listenAgents();
-            assignTask(); // MUST BE WORKING IN LOOP.
-
-
+        try {
+            sleep(500);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
+        System.out.println("Hello! Scheduler-agent " + getAID().getName() + " is ready.");
+
+        listenAgents();
+        assignTask(); // MUST BE WORKING IN LOOP.
+
 
     }
+
+}

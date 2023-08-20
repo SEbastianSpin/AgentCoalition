@@ -7,5 +7,6 @@ public class Package {
         this.id = id;
     }
 
+    float getWeight(){ return  weight;}
 
 }
