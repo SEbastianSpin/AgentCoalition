@@ -5,14 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="478dbda8-0214-4038-b45d-971fadc6dd7a" name="Changes" comment="Combined with Sebastian's code. Much cleaner scheduler and transportagents. 2 types of agents are created that are inherited from TransportAgent. DF has 2 service for repair and carrying package. Lists for idleAgents and activeAgents removed from scheduler everything is done by DF.">
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/jade.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/APDescription.txt" beforeDir="false" afterPath="$PROJECT_DIR$/APDescription.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MTPs-Main-Container.txt" beforeDir="false" afterPath="$PROJECT_DIR$/MTPs-Main-Container.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Package.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Package.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/PackageTask.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/PackageTask.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/PackageTransporter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/PackageTransporter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/ai/astar/AStar.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/ai/astar/AStar.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/SchedulerAgent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SchedulerAgent.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Task.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Task.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -32,11 +34,11 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;
   }
-}]]></component>
+}</component>
   <component name="GithubPullRequestsUISettings">
     <option name="selectedUrlAndAccountId">
       <UrlAndAccount>
@@ -70,7 +72,7 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Libraries",
+    "project.structure.last.edited": "Project",
     "project.structure.proportion": "0.15332031",
     "project.structure.side.proportion": "0.2",
     "vue.rearranger.settings.migration": "true"
