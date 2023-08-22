@@ -1,4 +1,4 @@
-import com.ai.astar.Node;
+
 import jade.core.Agent;
 import jade.core.Runtime;
 import jade.core.Profile;
@@ -16,6 +16,14 @@ import java.util.concurrent.TimeUnit;
 import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
 import com.ai.astar.AStar;
+
+
+
+import agents.MapWebSocketHandler;
+
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.websocket.server.WebSocketHandler;
+import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 
 
 public class Main {
@@ -66,7 +74,7 @@ public class Main {
                 e.printStackTrace();
             }
 
-        };
+    };
     }
     public static void printMap(AStar pf)
     {
@@ -90,7 +98,7 @@ public class Main {
         System.out.println("\n\n" + mapStr);
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         System.out.println("Hello world!");
         Random random = new Random();
         int rows = 6;
@@ -103,10 +111,12 @@ public class Main {
         ScheduledExecutorService executorTasks = Executors.newScheduledThreadPool(1); //Periodically adding new tasks
         ScheduledExecutorService executorPrintMap = Executors.newScheduledThreadPool(1);
 
-        executorTasks.scheduleAtFixedRate(() -> {
-            Queue<PackageTask> newTasks = generatePackageTasks(1, rows, cols);
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(4);
+        executor.scheduleAtFixedRate(() -> {
+            Queue<PackageTask> newTasks = generatePackageTasks(1);
             packageTaskQueue.addAll(newTasks);
-         //   System.out.println("New tasks added: " + newTasks);
+            MapWebSocketHandler.broadcastData(aStar.getSearchArea(),packageTaskQueue);
+            //System.out.println("New tasks added: " + newTasks);
         }, 5, 5, TimeUnit.SECONDS);
 
         executorPrintMap.scheduleAtFixedRate(() -> {
@@ -114,3 +124,14 @@ public class Main {
         }, 2, 2, TimeUnit.SECONDS);
     }
 }
+
+        Server server = new Server(8080);
+        server.setHandler(new WebSocketHandler() {
+            @Override
+            public void configure(WebSocketServletFactory factory) {
+                factory.register(MapWebSocketHandler.class);
+            }
+        });
+        server.start();
+
+    }}

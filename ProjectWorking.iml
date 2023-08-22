@@ -7,6 +7,8 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="eclipse.jetty.websocket.javax.server.impl" level="project" />
+    <orderEntry type="library" name="google.code.gson" level="project" />
     <orderEntry type="library" name="jade" level="project" />
   </component>
 </module>

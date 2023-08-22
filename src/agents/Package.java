@@ -1,3 +1,5 @@
+package agents;
+
 public class Package {
     private float weight;
     private int id;
