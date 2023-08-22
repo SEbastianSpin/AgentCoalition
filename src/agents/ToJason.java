@@ -2,11 +2,10 @@ package agents;
 
 import java.util.Queue;
 
-import com.ai.astar.Node;
 import com.google.gson.Gson;
 
 public class ToJason {
-    public static String toJson(Node[][] astarArray, Queue<PackageTask> packageTaskQueue) {
+    public static String toJson(String astarArray, Queue<PackageTask> packageTaskQueue) {
 
         try {
             Gson gson = new Gson();

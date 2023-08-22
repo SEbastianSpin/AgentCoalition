@@ -1,8 +1,9 @@
+package agents;
 
 public class Task {
-    protected int id;
-    protected int[][] origin;
-    protected int[][] destination;
+    public int id;
+    public int[][] origin;
+    public int[][] destination;
 
 
     public Task(int id, int[][] origin, int[][] destination) {

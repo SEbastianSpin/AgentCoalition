@@ -1,4 +1,5 @@
 
+import com.ai.astar.Node;
 import jade.core.Agent;
 import jade.core.Runtime;
 import jade.core.Profile;
@@ -20,6 +21,8 @@ import com.ai.astar.AStar;
 
 
 import agents.MapWebSocketHandler;
+import  agents.PackageTask;
+import  agents.Package;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.websocket.server.WebSocketHandler;
@@ -76,8 +79,7 @@ public class Main {
 
     };
     }
-    public static void printMap(AStar pf)
-    {
+    public static String mapToString(AStar pf) {
         Node[][] map = pf.getSearchArea();
         StringBuilder mapStr = new StringBuilder();
         for (Node[] nodes : map) {
@@ -95,8 +97,11 @@ public class Main {
         }
         mapStr.append("\n|");
         mapStr.append("-----|".repeat(map[0].length));
-        System.out.println("\n\n" + mapStr);
+        return "\n\n" + mapStr;
     }
+
+
+
 
     public static void main(String[] args) throws Exception {
         System.out.println("Hello world!");
@@ -113,17 +118,17 @@ public class Main {
 
         ScheduledExecutorService executor = Executors.newScheduledThreadPool(4);
         executor.scheduleAtFixedRate(() -> {
-            Queue<PackageTask> newTasks = generatePackageTasks(1);
+            Queue<PackageTask> newTasks = generatePackageTasks(1, rows, cols);
             packageTaskQueue.addAll(newTasks);
-            MapWebSocketHandler.broadcastData(aStar.getSearchArea(),packageTaskQueue);
+            MapWebSocketHandler.broadcastData(mapToString(aStar),packageTaskQueue);
             //System.out.println("New tasks added: " + newTasks);
         }, 5, 5, TimeUnit.SECONDS);
 
-        executorPrintMap.scheduleAtFixedRate(() -> {
-            printMap(aStar);
-        }, 2, 2, TimeUnit.SECONDS);
-    }
-}
+//        executorPrintMap.scheduleAtFixedRate(() -> {
+//            System.out.println(mapToString(aStar));
+//        }, 2, 2, TimeUnit.SECONDS);
+
+
 
         Server server = new Server(8080);
         server.setHandler(new WebSocketHandler() {

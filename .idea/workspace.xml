@@ -4,21 +4,19 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fb689d7a-f5f6-4e6e-87df-88837e303b20" name="Changes" comment="libraries">
-      <change afterPath="$PROJECT_DIR$/src/agents/DataWrapper.java" afterDir="false" />
+    <list default="true" id="fb689d7a-f5f6-4e6e-87df-88837e303b20" name="Changes" comment="Some changes to implement group">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/APDescription.txt" beforeDir="false" afterPath="$PROJECT_DIR$/APDescription.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MTPs-Main-Container.txt" beforeDir="false" afterPath="$PROJECT_DIR$/MTPs-Main-Container.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Map/app/src/App.css" beforeDir="false" afterPath="$PROJECT_DIR$/Map/app/src/App.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Map/app/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/Map/app/src/App.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/AgentTransporter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/agents/AgentTransporter.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Package.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/agents/Package.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/PackageTask.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/agents/PackageTask.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/SchedulerAgent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SchedulerAgent.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Task.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/agents/Task.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/agents/DataWrapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/agents/DataWrapper.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/agents/MapWebSocketHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/agents/MapWebSocketHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/agents/PackageTask.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/agents/PackageTask.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/agents/Task.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/agents/Task.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/agents/ToJason.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/agents/ToJason.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/ai/astar/AStar.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/ai/astar/AStar.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -138,6 +136,17 @@
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Some small changes" />

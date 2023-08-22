@@ -29,11 +29,11 @@ public class MapWebSocketHandler {
         sessions.remove(this.session);
     }
 
-    public static void broadcastData(Node[][] astarArray,
+    public static void broadcastData(String Map,
                                      Queue<PackageTask> packageTaskQueue) {
         sessions.keySet().forEach(session -> {
             try {
-                String jsonData = toJson(astarArray, packageTaskQueue);
+                String jsonData = toJson(Map, packageTaskQueue);
                 session.getRemote().sendString(jsonData);
             } catch (IOException e) {
                 e.printStackTrace();
