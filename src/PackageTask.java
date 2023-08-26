@@ -1,6 +1,5 @@
-
 public class PackageTask extends Task {
-    private Package pkg;
+    private final Package pkg;
 
     // Constructor
     public PackageTask(int id, int[][] origin, int[][] destination, Package pkg) {
@@ -8,7 +7,7 @@ public class PackageTask extends Task {
         this.pkg = pkg;
     }
 
-    public float getNumAgentsRequired() {
-        return  pkg.getWeight()/100; ///Should be changed it
+    int getNumAgentsRequired() {
+        return (int) (pkg.getWeight() / 100);
     }
 }

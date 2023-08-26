@@ -1,4 +1,4 @@
-import com.ai.astar.Node;
+import com.ai.astar.*;
 import jade.core.Agent;
 import jade.core.Runtime;
 import jade.core.Profile;
@@ -12,11 +12,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
-import jade.wrapper.AgentContainer;
-import jade.wrapper.AgentController;
-import com.ai.astar.AStar;
-
 
 public class Main {
     public static Queue<PackageTask> generatePackageTasks(int numTasks, int rowBound, int colBound) {
