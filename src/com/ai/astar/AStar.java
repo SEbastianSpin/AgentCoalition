@@ -1,4 +1,5 @@
 package com.ai.astar;
+
 import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -11,7 +12,6 @@ import java.util.concurrent.locks.ReentrantLock;
 public class AStar {
     private static int DEFAULT_HV_COST = 10; // Horizontal - Vertical Cost
     private static int DEFAULT_DIAGONAL_COST = 14;
-
     private ReentrantLock lock;
     private int hvCost;
     private int diagonalCost;
@@ -21,8 +21,7 @@ public class AStar {
     private Node initialNode;
     private Node finalNode;
 
-    public AStar(int rows, int cols)
-    {
+    public AStar(int rows, int cols) {
         this.searchArea = new Node[rows][cols];
         lock = new ReentrantLock();
         initialNode = new Node();
@@ -36,6 +35,7 @@ public class AStar {
         this.closedSet = new HashSet<>();
         initializeNodes();
     }
+
     public AStar(int rows, int cols, Node initialNode, Node finalNode, int hvCost, int diagonalCost) {
         lock = new ReentrantLock();
         this.hvCost = hvCost;
@@ -58,15 +58,17 @@ public class AStar {
         this(rows, cols, initialNode, finalNode, DEFAULT_HV_COST, DEFAULT_DIAGONAL_COST);
     }
 
+    public void clearNode(int col, int row) {
+        this.searchArea[row][col] = new Node(row, col);
+    }
+
     /**
      * @brief Initializes search area with nodes
      */
-    private void initializeNodes()
-    {
+    private void initializeNodes() {
         for (int i = 0; i < searchArea.length; i++) {
             for (int j = 0; j < searchArea[0].length; j++) {
-                Node node = new Node(i, j);
-                this.searchArea[i][j] = node;
+                this.searchArea[i][j] = new Node(i, j);
             }
         }
     }
@@ -75,7 +77,7 @@ public class AStar {
      * @brief Sets the heuristics for each node based on the search area
      */
     private void setNodes() {
-        for(int i = 0; i < searchArea.length; i++) {
+        for (int i = 0; i < searchArea.length; i++) {
             for (int j = 0; j < searchArea[0].length; j++) {
                 this.searchArea[i][j].calculateHeuristic(getFinalNode());
             }
@@ -197,8 +199,11 @@ public class AStar {
         return initialNode;
     }
 
-    public int[] move(int startX, int startY, int goalX, int goalY, String value)
-    {
+    public void setInitialNode(Node initialNode) {
+        this.initialNode = initialNode;
+    }
+
+    public int[] move(int startX, int startY, int goalX, int goalY, String value) {
         lock.lock();
         openList.clear();
         closedSet.clear();
@@ -210,21 +215,17 @@ public class AStar {
         int[] nextPos;
         List<Node> path = findPath();
         //path found
-        if(!path.isEmpty()) {
+        if (!path.isEmpty()) {
             Node next = path.get(1);
             nextPos = new int[]{next.getRow(), next.getCol()};
             next.setBlock(true);
             next.setValue(value);
             this.searchArea[nextPos[0]][nextPos[1]] = next;
             this.searchArea[startY][startX].setBlock(false);
-        }
-        else //no path found
+        } else //no path found
             nextPos = new int[]{startY, startX};
         lock.unlock();
         return nextPos;
-    }
-    public void setInitialNode(Node initialNode) {
-        this.initialNode = initialNode;
     }
 
     public Node getFinalNode() {
@@ -273,5 +274,9 @@ public class AStar {
 
     private void setDiagonalCost(int diagonalCost) {
         this.diagonalCost = diagonalCost;
+    }
+
+    public void updateNode(int col, int row, char value) {
+        this.searchArea[col][row].setValue(String.valueOf(value));
     }
 }

@@ -8,18 +8,17 @@ import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 
-
-import static java.lang.Thread.sleep;
-
 public class PackageTransporter extends TransportAgent {
     private int state = 1;
     private AID schedulerAID;
     private int startX, startY, goalX, goalY, taskId;
+
     public PackageTransporter(AStar pf, int startX, int startY) {
         super(pf, startX, startY);
     }
+
     private void onWork() {
-        addBehaviour(new TickerBehaviour(this, 2000){
+        addBehaviour(new TickerBehaviour(this, 2000) {
             public void onTick() {
                 switch (state) {
                     case (1) -> {
@@ -32,6 +31,7 @@ public class PackageTransporter extends TransportAgent {
                     }
                     case (2) -> {
                         moveToLocation(startX, startY);
+                        //state = 1 // To be done when @Sebastian updates the scheduler's logic.
                     }
                     case (3) -> {
                         moveToLocation(goalX, goalY);
@@ -43,19 +43,25 @@ public class PackageTransporter extends TransportAgent {
                 }
             }
 
-            public void takeDown(){
+            public void takeDown() {
                 setStatus(Status.IDLE);
                 stop();
             }
         });
     }
 
+    /*
+     * @brief Used to remove the individual agents from the map when the agents move as a group.
+     */
+    public void removeFromMap() {
+        pf.clearNode(curX, curY);
+    }
+
     private void processMessageFromScheduler(ACLMessage message) {
 
-        if(schedulerAID == null) {
+        if (schedulerAID == null) {
             schedulerAID = message.getSender();
         }
-
 
         switch (message.getPerformative()) {
             case ACLMessage.PROPOSE -> {
@@ -68,15 +74,15 @@ public class PackageTransporter extends TransportAgent {
             case ACLMessage.REQUEST -> System.out.println("" + message.getContent() + "");
         }
     }
-    private void moveToLocation(int locationX, int locationY)
-    {
+
+    public void moveToLocation(int locationX, int locationY) {
         if (curX == locationX && curY == locationY) {
             state++;
             if (curX == this.startX && curY == this.startY) {
-               // System.out.println("Agent " + id + ": Reached the origin.");
+                // System.out.println("Agent " + id + ": Reached the origin.");
                 ACLMessage informMsg = new ACLMessage(ACLMessage.INFORM);
                 informMsg.addReceiver(schedulerAID);
-                informMsg.setContent(taskId+" ,");
+                informMsg.setContent(taskId + " ,");
                 send(informMsg);
             }
         } else {
@@ -85,6 +91,10 @@ public class PackageTransporter extends TransportAgent {
             curY = cur[0];
         }
     }
+
+    /* @ToDo Scheduler should only send one location at a time. The message should contain keywords
+         "origin" and "destination" which will be used to set the next states for the agents.
+    */
     private void handleProposeMessage(ACLMessage message) throws InterruptedException {
         if (status == Status.IDLE) {
             setStatus(Status.ACTIVE);
@@ -94,12 +104,11 @@ public class PackageTransporter extends TransportAgent {
 
             goalX = Integer.parseInt(parts[2].trim());
             goalY = Integer.parseInt(parts[3].trim());
-            taskId= Integer.parseInt(parts[4].trim());
+            taskId = Integer.parseInt(parts[4].trim());
 
             ACLMessage reply = message.createReply();
             reply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
             send(reply);
-
             state++;
         } else {
             System.out.println("Ignoring proposal from " + message.getSender().getName() + " as the agent is not active");
@@ -109,7 +118,7 @@ public class PackageTransporter extends TransportAgent {
     @Override
     protected void setup() {
 
-        System.out.println("Hello! PACKAGE-TRANSPORTER "+getAID().getName()+" is ready.");
+        System.out.println("Hello! PACKAGE-TRANSPORTER " + getAID().getName() + " is ready.");
 
         DFAgentDescription agentDescription = new DFAgentDescription();
         agentDescription.setName(getAID());
@@ -126,5 +135,13 @@ public class PackageTransporter extends TransportAgent {
             e.printStackTrace();
         }
         onWork();
+    }
+
+    /*
+     * @brief Used to update the string displayed on the map representing the agent.
+     * Used mainly for updating the leader's node value to the group node value.
+     */
+    public void updateNodeValue(char value) {
+        pf.updateNode(curX, curY, value);
     }
 }
