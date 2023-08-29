@@ -1,3 +1,4 @@
+import com.ai.astar.AStar;
 import jade.core.Agent;
 import jade.core.behaviours.*;
 import jade.domain.DFService;
@@ -5,36 +6,59 @@ import jade.domain.FIPAAgentManagement.Property;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
-import jade.lang.acl.ACLMessage;
-
 import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
 
-enum States{
+enum Status {
     ACTIVE,
     IDLE,
     BROKEN
 }
 
 public class TransportAgent extends Agent {
-
     private static int nextId = 0;
+    public AStar pf;
     public int id;
-    protected States state;
-    private double probability; // probability of breaking down
-    private Random random;
-    private ConcurrentHashMap<Integer, ConcurrentHashMap<Integer, String>> map;
+    int curX, curY, width, height;
+    protected Status status;
 
-    public TransportAgent(ConcurrentHashMap factoryMap){
-        this.state = States.IDLE; //It must be idle initially
+
+    private Random random;
+    protected double reliabiltiy; // probability of staying active
+    private int age; //time it spends till breakdown
+    private double lambda =0.00333333333;
+
+    public TransportAgent(AStar pf, int X, int Y){
+        this.status = Status.IDLE; //It must be idle initially
         this.id = nextId++;
-        this.probability = 0.5; // probability of breaking down
+        this.reliabiltiy = 1; //initially each robot has the value 1
         this.random = new Random();
-        map= factoryMap;
+        this.pf = pf;
+        this.curX = X;
+        this.curY = Y;
+    }
+    protected void startAging(){
+        addBehaviour(new TickerBehaviour(this,2000) {
+            @Override
+            protected void onTick() {
+                if(status == Status.ACTIVE){
+                    age++;
+                    reliabiltiy = Math.exp(-lambda*age);
+                     if (random.nextDouble()%1 > reliabiltiy) { // has to change to States.Active
+                        setStatus(Status.BROKEN);
+                        age=0;
+                        System.out.println(getName() + " has broken down");
+                     }
+                }
+            }
+        });
+
+
+
+
     }
 
-    public void setState(States newState) { //Will be used to change the state of agent
-        this.state = newState;
+    public void setStatus(Status newState) { //Will be used to change the state of agent
+        this.status = newState;
 
         // Update the property value whenever the state changes
         DFAgentDescription dfd = new DFAgentDescription();
@@ -44,7 +68,7 @@ public class TransportAgent extends Agent {
         ServiceDescription serviceDescription = new ServiceDescription();
         serviceDescription.setType("TransportAgent");
         serviceDescription.setName(getLocalName() + "-TransportAgent");
-        serviceDescription.addProperties(new Property("Status", this.state));
+        serviceDescription.addProperties(new Property("Status", this.status));
         dfd.addServices(serviceDescription);
 
         try {
@@ -56,17 +80,6 @@ public class TransportAgent extends Agent {
     @Override
     protected void setup() {
 
-        addBehaviour(new TickerBehaviour(this, 1000) { // checks 1s , PROBABILITY EXPONENTIAL DISTRIBUTION GOOD IDEA
-            @Override
-            public void onTick() {
-                if (state == States.IDLE && random.nextDouble() < probability) { // has to change to States.Active
-                    state = States.BROKEN;
-                    System.out.println(getName() + " has broken down");
-                }
-//                else{
-//                    System.out.println(getName() + " has not broken down");
-//                }
-            }
-        });
+
     }
 }
