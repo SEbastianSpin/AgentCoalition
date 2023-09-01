@@ -20,6 +20,16 @@ public class SchedulerAgent extends Agent {
     private final Map<Integer, List<AID>> packageGroupMap = new HashMap<>(); // to track agents per package
     private final Map<Integer, Integer> agentsAtOriginCount = new HashMap<>(); // package id vs count of agents at origin
 
+    public SchedulerAgent(Queue<PackageTask> packageTaskQueue) {
+        Task = packageTaskQueue;
+    }
+    private void listenAgents() {
+        addBehaviour(checkForMessagesBehaviour);
+    }
+
+    private void assignTask() {
+        addBehaviour(taskAssignmentBehaviour);
+    }
     protected DFAgentDescription[] searchAgents(String dfSerivce, Status state,int agentNo) {
         DFAgentDescription[] result = null;
 
@@ -74,79 +84,64 @@ public class SchedulerAgent extends Agent {
                 int requiredAgent = task.getNumAgentsRequired();
                 DFAgentDescription[] idleAgents = searchAgents("PackageTransporter", Status.IDLE,requiredAgent);
                 if (idleAgents.length < requiredAgent) {
-                        System.out.println("No agents available to assign.");
-                        Task.add(task); // It is not done so need to be placed back
+                    System.out.println("No agents available to assign.");
+                    Task.add(task); // It is not done so need to be placed back
                 }
                 else {
 
-                        System.out.println("Task needs: " + requiredAgent);
-                        System.out.println("Package Origin - " + task.origin[0][0] + "," + task.origin[0][1] + ", Destination - " + (task.destination[0][0]) + "," + task.destination[0][1] + " Task ID - " + task.id);
-                        int adjust = 0;
-                        for (DFAgentDescription groupAgent : idleAgents) {
+                    System.out.println("Task needs: " + requiredAgent);
+                    System.out.println("Package Origin - " + task.origin[0][0] + "," + task.origin[0][1] + ", Destination - " + (task.destination[0][0]) + "," + task.destination[0][1] + " Task ID - " + task.id);
+                    int adjust = 0;
+                    for (DFAgentDescription groupAgent : idleAgents) {
 
-                            int xAdjust = 0, yAdjust = 0;
+                        int xAdjust = 0, yAdjust = 0;
 
-                            switch (adjust) {
-                                case 0:
-                                    // No adjustment for the first agent
-                                    xAdjust = 0;
-                                    yAdjust = 0;
-                                    break;
-                                case 1:
-                                    xAdjust = 1;
-                                    yAdjust = 0;
-                                    break;
-                                case 2:
-                                    xAdjust = 0;
-                                    yAdjust = 1;
-                                    break;
-                                case 3:
-                                    xAdjust = 1;
-                                    yAdjust = 1;
-                                    break;
-                            }
-
-                            ACLMessage assignment = new ACLMessage(ACLMessage.PROPOSE);
-                            assignment.setContent((task.origin[0][0] + xAdjust) + "," + (task.origin[0][1] + yAdjust) + "," + task.destination[0][0] + "," + task.destination[0][1] + "," + task.id);
-                            adjust++;
-                            //THE LOGIC FOR ASSIGNMENT OF PACKAGES CAN BE IMPLEMENTED SOMEWHERE HERE
-                            assignment.addReceiver(groupAgent.getName());
-                            send(assignment);
-                            adjust++;
+                        switch (adjust) {
+                            case 0:
+                                // No adjustment for the first agent
+                                xAdjust = 0;
+                                yAdjust = 0;
+                                break;
+                            case 1:
+                                xAdjust = 1;
+                                yAdjust = 0;
+                                break;
+                            case 2:
+                                xAdjust = 0;
+                                yAdjust = 1;
+                                break;
+                            case 3:
+                                xAdjust = 1;
+                                yAdjust = 1;
+                                break;
                         }
-                        for (int i = idleAgents.length - 1; i >= 0; i--) {
-                             groupAgents.add(idleAgents[i].getName());
-                        }
-                        Arrays.fill(idleAgents,null);
-                        packageGroupMap.put(task.id, groupAgents);
-                        System.out.println(packageGroupMap);
+
+                        ACLMessage assignment = new ACLMessage(ACLMessage.PROPOSE);
+                        assignment.setContent((task.origin[0][0] + xAdjust) + "," + (task.origin[0][1] + yAdjust) + "," + task.destination[0][0] + "," + task.destination[0][1] + "," + task.id);
+                        adjust++;
+                        //THE LOGIC FOR ASSIGNMENT OF PACKAGES CAN BE IMPLEMENTED SOMEWHERE HERE
+                        assignment.addReceiver(groupAgent.getName());
+                        send(assignment);
+                        adjust++;
                     }
+                    for (int i = idleAgents.length - 1; i >= 0; i--) {
+                        groupAgents.add(idleAgents[i].getName());
+                    }
+                    Arrays.fill(idleAgents,null);
+                    packageGroupMap.put(task.id, groupAgents);
+                    System.out.println(packageGroupMap);
                 }
+            }
             detectBreakout();
 
-            }
+        }
     };
-
-    public SchedulerAgent(Queue<PackageTask> packageTaskQueue) {
-        Task = packageTaskQueue;
-    }
-
-    // private DFAgentDescription[] searchAgents(String dfSerivce, States state) { //When we need to assing more than 1 robot I will add No of agent parameter
-
-
-    private void listenAgents() {
-        addBehaviour(checkForMessagesBehaviour);
-    }
-
-    private void assignTask() {
-        addBehaviour(taskAssignmentBehaviour);
-    }
 
     private void detectBreakout() //THIS FUNCTION WILL DETECT BREAKOUT AND SEND MESSAGE (CONTAINS COORDINATES OF BROKEN AGENT TO THE AGENTRANSPOTER .
     {
         ArrayList<Integer> Coordinates = new ArrayList<>();
         DFAgentDescription[] result = searchAgents("PackageTransporter", Status.BROKEN,1); // DETECTS BROKEN PackageTransporters.
-        ////
+
     }
 
     @Override
