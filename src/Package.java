@@ -6,4 +6,7 @@ public class Package {
         this.weight = weight;
         this.id = id;
     }
+
+    float getWeight(){ return  weight;}
+
 }

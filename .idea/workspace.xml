@@ -4,15 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fb689d7a-f5f6-4e6e-87df-88837e303b20" name="Changes" comment="Combined with Sebastian's code. Much cleaner scheduler and transportagents. 2 types of agents are created that are inherited from TransportAgent. DF has 2 service for repair and carrying package. Lists for idleAgents and activeAgents removed from scheduler everything is done by DF.">
+    <list default="true" id="fb689d7a-f5f6-4e6e-87df-88837e303b20" name="Changes" comment="SearchAgent updated. detectBreakout method added (there is written the intention of this method commented).Some implementation about task assignment updated.">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/APDescription.txt" beforeDir="false" afterPath="$PROJECT_DIR$/APDescription.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MTPs-Main-Container.txt" beforeDir="false" afterPath="$PROJECT_DIR$/MTPs-Main-Container.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/AgentTransporter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AgentTransporter.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/PackageTransporter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/PackageTransporter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/SchedulerAgent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SchedulerAgent.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/TransportAgent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/TransportAgent.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/ai/astar/TransportAgent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/ai/astar/TransportAgent.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Package.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Package.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/PackageTask.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/PackageTask.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/StatusAgent.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/ai/astar/AStar.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/ai/astar/AStar.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -26,11 +28,24 @@
       </list>
     </option>
   </component>
+  <component name="Git.Rebase.Settings">
+    <option name="NEW_BASE" value="origin/master" />
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/src/StatusAgent.java" root0="FORCE_HIGHLIGHTING" />
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">
+    <option name="selectedUrlAndAccountId">
+      <UrlAndAccount>
+        <option name="accountId" value="2706bda1-8e24-46d9-9c15-5ce9be98cc1b" />
+        <option name="url" value="https://github.com/SEbastianSpin/AgentCoalition.git" />
+      </UrlAndAccount>
+    </option>
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -47,14 +62,16 @@
   &quot;keyToString&quot;: {
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/osmns/Desktop/jade.jar&quot;,
+    &quot;jdk.selected.JAVA_MODULE&quot;: &quot;openjdk-20&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Sebastian/Documents/SebasLab/AgentCoalitionV8/JADE-bin-4.6.0/jade/lib/jade.jar&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.15332031&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
@@ -62,6 +79,8 @@
 }</component>
   <component name="RunManager">
     <configuration name="Main" type="Application" factoryName="Application" nameIsGenerated="true">
+      <option name="ALTERNATIVE_JRE_PATH" value="openjdk-20" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
       <option name="MAIN_CLASS_NAME" value="Main" />
       <module name="ProjectWorking" />
       <method v="2">
@@ -95,6 +114,11 @@
       <workItem from="1690997654769" duration="3419000" />
       <workItem from="1691150036727" duration="9316000" />
       <workItem from="1691418797068" duration="3096000" />
+      <workItem from="1693590281419" duration="80000" />
+      <workItem from="1693590368992" duration="244000" />
+      <workItem from="1693590628574" duration="61000" />
+      <workItem from="1693590697517" duration="2397000" />
+      <workItem from="1693663338270" duration="1916000" />
     </task>
     <task id="LOCAL-00001" summary="Some small changes">
       <created>1689759906413</created>
@@ -131,16 +155,53 @@
       <option name="project" value="LOCAL" />
       <updated>1690998751935</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="SearchAgent updated. detectBreakout method added (there is written the intention of this method commented).Some implementation about task assignment updated.">
+      <created>1693590169892</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1693590169892</updated>
+    </task>
+    <task id="LOCAL-00007" summary="SearchAgent updated. detectBreakout method added (there is written the intention of this method commented).Some implementation about task assignment updated.">
+      <created>1693592177315</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1693592177315</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="Vcs.Log.History.Properties">
+    <option name="COLUMN_ID_ORDER">
+      <list>
+        <option value="Default.Root" />
+        <option value="Default.Author" />
+        <option value="Default.Date" />
+        <option value="Default.Subject" />
+        <option value="Space.CommitStatus" />
+      </list>
+    </option>
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Some small changes" />
     <MESSAGE value="I added transport agent status as a property so that we are able to follow the status of the agent by DF. Furthermore, I had to change the way of assigning the state of transport agent (instead of this.state=States.IDLE etc. I created setter method) thus we are able to make the changes dyanmically on the status." />
     <MESSAGE value="Combined with Sebastian's code. Much cleaner scheduler and transportagents. 2 types of agents are created that are inherited from TransportAgent. DF has 2 service for repair and carrying package. Lists for idleAgents and activeAgents removed from scheduler everything is done by DF." />
-    <option name="LAST_COMMIT_MESSAGE" value="Combined with Sebastian's code. Much cleaner scheduler and transportagents. 2 types of agents are created that are inherited from TransportAgent. DF has 2 service for repair and carrying package. Lists for idleAgents and activeAgents removed from scheduler everything is done by DF." />
+    <MESSAGE value="SearchAgent updated. detectBreakout method added (there is written the intention of this method commented).Some implementation about task assignment updated." />
+    <option name="LAST_COMMIT_MESSAGE" value="SearchAgent updated. detectBreakout method added (there is written the intention of this method commented).Some implementation about task assignment updated." />
   </component>
 </project>
