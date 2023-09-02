@@ -77,12 +77,15 @@ public class SchedulerAgent extends Agent {
         }
     }
 
-    // private DFAgentDescription[] searchAgents(String dfSerivce, States state) { //When we need to assing more than 1 robot I will add No of agent parameter
+    /*
+     * @brief searches for agents based on the specified state.
+     * @params The service of the agent type requested and the status,
+     * typically uses package dfService as PackageTransporter with state as idle.
+     */
     private DFAgentDescription[] searchAgents(String dfSerivce, Status state) {
         DFAgentDescription[] result = null;
 
         try {
-
             DFAgentDescription template = new DFAgentDescription();
             ServiceDescription sd = new ServiceDescription();
             sd.setType(dfSerivce);
@@ -92,14 +95,17 @@ public class SchedulerAgent extends Agent {
         } catch (FIPAException e) {
             e.printStackTrace();
         }
-
         return result;
     }
 
+    /*
+     * @brief listen to incoming messages from transport agents.
+     */
     private void listenAgents() {
         ACLMessage rcv = receive();
 
         if(rcv == null) {
+            System.out.println("Debug-Scheduler: No message received");
             return;
         }
 
@@ -110,17 +116,17 @@ public class SchedulerAgent extends Agent {
                 } else {
                     String[] parts = rcv.getContent().split(",");
                     String content = rcv.getContent();
-                    int agentTaskId = Integer.parseInt(parts[0].trim());//ox and oy can be used if the robot isnt near the box and wants go to it
-
+                    int agentTaskId = Integer.parseInt(parts[0].trim()); // ox and oy can be used if the robot isnt near the box and wants go to it
                     agentsAtOriginCount.put(agentTaskId, agentsAtOriginCount.getOrDefault(agentTaskId, 0) + 1);
                     if (agentsAtOriginCount.get(agentTaskId) == taskGroupMap.get(agentTaskId).size()) {
-                        System.out.println("Debug-Scheduler: For " + agentTaskId + " All agent reached Origin");
+                        System.out.println("Debug-Scheduler: For " + agentTaskId + " All agents reached origin");
                         informAgentsToProceedToDestination(agentTaskId);
                     }
                 }
             }
-            case ACLMessage.ACCEPT_PROPOSAL ->
-                    System.out.println("Debug-Scheduler: The task has been accepted by" + rcv.getSender());
+            case ACLMessage.ACCEPT_PROPOSAL -> {
+                System.out.println("Debug-Scheduler: The task has been accepted by" + rcv.getSender());
+            }
         }
     }
 
@@ -129,13 +135,12 @@ public class SchedulerAgent extends Agent {
         if (!Task.isEmpty()) {
             DFAgentDescription[] idleAgents = searchAgents("PackageTransporter", Status.IDLE);
             Queue<DFAgentDescription> idleAgentsQueue = new LinkedList<>(Arrays.asList(idleAgents));
-
             if (idleAgentsQueue.isEmpty()) {
                 System.out.println("Debug-Scheduler: There is no available Transport agents for task assignment");
             } else {
                 PackageTask task = Task.poll(); // is removed
                 if (idleAgentsQueue.size() < task.getNumAgentsRequired()) {
-                    System.out.println("Debug-Scheduler: No agents available to assign.");
+                    System.out.println("Debug-Scheduler: Insufficient agents available.");
                     Task.add(task); // It is not done so need to be placed back
                 } else {
                     while (group.size() < task.getNumAgentsRequired() && !idleAgentsQueue.isEmpty()) {
@@ -143,7 +148,6 @@ public class SchedulerAgent extends Agent {
                     }
                     System.out.println("Debug-Scheduler: Task needs: " + task.getNumAgentsRequired());
                     System.out.println("Debug-Scheduler: Package Origin - " + task.origin[0][0] + "," + task.origin[0][1] + ", Destination - " + (task.destination[0][0]) + "," + task.destination[0][1] + " Task ID - " + task.id);
-                    int adjust = 0;
                     sendOriginAndDestinationToGroup(group, task);
                     taskGroupMap.put(task.id, group);
                     System.out.println(taskGroupMap);
