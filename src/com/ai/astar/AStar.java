@@ -88,7 +88,7 @@ public class AStar {
         for (int i = 0; i < blocksArray.length; i++) {
             int row = blocksArray[i][0];
             int col = blocksArray[i][1];
-            setBlock(row, col);
+            setBlock(row, col, "X");
         }
     }
 
@@ -194,6 +194,10 @@ public class AStar {
     private void setBlock(int row, int col) {
         this.searchArea[row][col].setBlock(true);
     }
+    private void setBlock(int row, int col, String value) {
+        this.searchArea[row][col].setBlock(true);
+        this.searchArea[row][col].setValue(value);
+    }
 
     public Node getInitialNode() {
         return initialNode;
@@ -201,6 +205,27 @@ public class AStar {
 
     public void setInitialNode(Node initialNode) {
         this.initialNode = initialNode;
+    }
+
+    /*
+     * @brief Return string array map.
+     */
+    public String[][] getStringArrayMap()
+    {
+        int rows = searchArea.length;
+        int cols = searchArea[0].length;
+        String[][] map = new String[rows][cols];
+        for(int i = 0; i < rows; i++)
+        {
+            for(int j = 0; j < cols; j++)
+            {
+                if(searchArea[i][j].isBlock())
+                    map[i][j] = searchArea[i][j].getValue();
+                else
+                    map[i][j] = " ";
+            }
+        }
+        return map;
     }
 
     public int[] move(int startX, int startY, int goalX, int goalY, String value) {
@@ -218,8 +243,7 @@ public class AStar {
         if (!path.isEmpty()) {
             Node next = path.get(1);
             nextPos = new int[]{next.getRow(), next.getCol()};
-            next.setBlock(true);
-            next.setValue(value);
+            next.setBlock(true, value);
             this.searchArea[nextPos[0]][nextPos[1]] = next;
             this.searchArea[startY][startX].setBlock(false);
         } else //no path found

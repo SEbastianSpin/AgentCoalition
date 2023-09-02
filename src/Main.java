@@ -66,23 +66,20 @@ public class Main {
     }
     public static void printMap(AStar pf)
     {
-        Node[][] map = pf.getSearchArea();
+        String[][] stringMap = pf.getStringArrayMap();
         StringBuilder mapStr = new StringBuilder();
-        for (Node[] nodes : map) {
+        for (String[] nodes : stringMap) {
             mapStr.append("\n|");
-            mapStr.append("-----|".repeat(map[0].length));
+            mapStr.append("-----|".repeat(stringMap[0].length));
             mapStr.append("\n|");
-            for (int j = 0; j < map[0].length; j++) {
+            for (int j = 0; j < stringMap[0].length; j++) {
                 mapStr.append("  ");
-                if (nodes[j].isBlock())
-                    mapStr.append(nodes[j].getValue());
-                else
-                    mapStr.append(" ");
+                mapStr.append(nodes[j]);
                 mapStr.append("  |");
             }
         }
         mapStr.append("\n|");
-        mapStr.append("-----|".repeat(map[0].length));
+        mapStr.append("-----|".repeat(stringMap[0].length));
         System.out.println("\n\n" + mapStr);
     }
 

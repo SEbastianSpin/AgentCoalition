@@ -111,6 +111,11 @@ public class Node {
         this.isBlock = isBlock;
     }
 
+    public void setBlock(boolean isBlock, String value) {
+        this.isBlock = isBlock;
+        this.value = value;
+    }
+
     public int getRow() {
         return row;
     }

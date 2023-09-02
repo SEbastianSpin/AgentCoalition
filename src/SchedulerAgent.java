@@ -194,7 +194,6 @@ public class SchedulerAgent extends Agent {
 
     @Override
     protected void setup() {
-
         try {
             sleep(500);
         } catch (InterruptedException e) {
