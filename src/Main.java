@@ -21,7 +21,8 @@ public class Main {
         for(int id=0; id<numTasks; id++){
             int[][] origin = {{random.nextInt(rowBound), random.nextInt(colBound)}};
             int[][] destination = {{random.nextInt(rowBound), random.nextInt(colBound)}};
-            float weight = (random.nextBoolean()) ? 200f : 400f;
+//            float weight = (random.nextBoolean()) ? 200f : 400f;
+            float weight = 200f;
             Package pkg = new Package(weight, random.nextInt());
             PackageTask task = new PackageTask(id, origin, destination, pkg);
             packageTaskQueue.add(task);
@@ -31,7 +32,7 @@ public class Main {
     }
 
 
-    public static void createAgents(int Transportagents, Queue packageTaskQueue, AStar pf){
+    public static void createAgents(int transportAgents, Queue packageTaskQueue, AStar pf){
         String[] guiArgs = {""};
 
         jade.Boot.main(guiArgs);
@@ -40,7 +41,7 @@ public class Main {
         profile.setParameter(Profile.GUI, "true"); // Enable the GUI
         AgentContainer container = rt.createMainContainer(profile);
 
-        for (int i = 0; i < Transportagents; i++) {
+        for (int i = 0; i < transportAgents; i++) {
             int startX =  0;
             int startY = (i + 1) % pf.getSearchArea()[0].length;
 
@@ -65,23 +66,20 @@ public class Main {
     }
     public static void printMap(AStar pf)
     {
-        Node[][] map = pf.getSearchArea();
+        String[][] stringMap = pf.getStringArrayMap();
         StringBuilder mapStr = new StringBuilder();
-        for (Node[] nodes : map) {
+        for (String[] nodes : stringMap) {
             mapStr.append("\n|");
-            mapStr.append("-----|".repeat(map[0].length));
+            mapStr.append("-----|".repeat(stringMap[0].length));
             mapStr.append("\n|");
-            for (int j = 0; j < map[0].length; j++) {
+            for (int j = 0; j < stringMap[0].length; j++) {
                 mapStr.append("  ");
-                if (nodes[j].isBlock())
-                    mapStr.append(nodes[j].getValue());
-                else
-                    mapStr.append(" ");
+                mapStr.append(nodes[j]);
                 mapStr.append("  |");
             }
         }
         mapStr.append("\n|");
-        mapStr.append("-----|".repeat(map[0].length));
+        mapStr.append("-----|".repeat(stringMap[0].length));
         System.out.println("\n\n" + mapStr);
     }
 
@@ -94,7 +92,7 @@ public class Main {
         Queue<PackageTask> packageTaskQueue = generatePackageTasks(2, rows, cols);
 
         System.out.println(packageTaskQueue);
-        createAgents(8, packageTaskQueue,aStar);
+        createAgents(2, packageTaskQueue,aStar);
         ScheduledExecutorService executorTasks = Executors.newScheduledThreadPool(1); //Periodically adding new tasks
         ScheduledExecutorService executorPrintMap = Executors.newScheduledThreadPool(1);
 
