@@ -7,8 +7,13 @@ import jade.domain.FIPAAgentManagement.Property;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
+import jade.lang.acl.UnreadableException;
+
+import java.util.List;
 
 public class PackageTransporter extends TransportAgent {
+    List<AID> group;
     private int state = 1;
     private AID schedulerAID;
     private int startX, startY, goalX, goalY, taskId;
@@ -21,7 +26,7 @@ public class PackageTransporter extends TransportAgent {
         addBehaviour(new TickerBehaviour(this, 2000) {
             public void onTick() {
                 switch (state) {
-                    case (1) -> {
+                    case (1)-> {
                         ACLMessage rcv = receive();
                         if (rcv != null) {
                             processMessageFromScheduler(rcv);
@@ -31,12 +36,36 @@ public class PackageTransporter extends TransportAgent {
                     }
                     case (2) -> {
                         moveToLocation(startX, startY);
-                        //state = 1 // To be done when @Sebastian updates the scheduler's logic.
+                        if (curX == startX && curY == startY) {
+                            state = 1;
+                            ACLMessage informMsg = new ACLMessage(ACLMessage.INFORM);
+                            informMsg.addReceiver(schedulerAID);
+                            informMsg.setContent(taskId + " ,");
+                            send(informMsg);
+                        }
                     }
-                    case (3) -> {
+                    case(3) -> {
+                        ACLMessage rcv = receive();
+                        if (rcv != null) {
+                            waitForCompletionFromLeader(rcv);
+                        } else {
+                            block();
+                        }
+                    }
+                    case(4) -> {
                         moveToLocation(goalX, goalY);
+                        if(curX == goalX && curY == goalY)
+                        {
+                            ACLMessage informMsg = new ACLMessage(ACLMessage.INFORM);
+                            informMsg.addReceiver(schedulerAID);
+                            informMsg.setContent("Completed Task:" + taskId);
+                            send(informMsg);
+                            state++;
+                            System.out.println("Debug-Transporter-" + id + ": Reached the destination.");
+                            informGroupMembers();
+                        }
                     }
-                    case (4) -> {
+                    case (5) -> {
                         setStatus(Status.IDLE);
                         state = 1;
                     }
@@ -48,6 +77,26 @@ public class PackageTransporter extends TransportAgent {
                 stop();
             }
         });
+    }
+
+    private void informGroupMembers() {
+        for(AID agent : group)
+        {
+            if(agent != getAID())
+            {
+                ACLMessage message = new ACLMessage(ACLMessage.INFORM);
+                message.setContent("Destination reached");
+                message.addReceiver(agent);
+                send(message);
+            }
+        }
+    }
+
+    private void waitForCompletionFromLeader(ACLMessage rcv) {
+        curX = goalX;
+        curY = goalY;
+        state = 5;
+        System.out.println("Debug-Transporter-" + id + ": Reached the destination. Message received from leader");
     }
 
     /*
@@ -72,29 +121,32 @@ public class PackageTransporter extends TransportAgent {
                 }
             }
             case ACLMessage.REQUEST -> System.out.println("" + message.getContent() + "");
+            case ACLMessage.INFORM -> {
+                if(message.hasByteSequenceContent()) {
+                    state = 4;
+                    value = "A";
+                    pf.updateNode(curX, curY, "A");
+                    try {
+                        group = (List<AID>) message.getContentObject();
+                    } catch (UnreadableException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                else
+                {
+                    state = 3;
+                    pf.clearNode(curX, curY);
+                }
+            }
         }
     }
 
     public void moveToLocation(int locationX, int locationY) {
-        if (curX == locationX && curY == locationY) {
-            state++;
-            if (curX == this.startX && curY == this.startY) {
-                // System.out.println("Agent " + id + ": Reached the origin.");
-                ACLMessage informMsg = new ACLMessage(ACLMessage.INFORM);
-                informMsg.addReceiver(schedulerAID);
-                informMsg.setContent(taskId + " ,");
-                send(informMsg);
-            }
-        } else {
-            int[] cur = pf.move(curX, curY, locationX, locationY, String.valueOf(id));
-            curX = cur[1];
-            curY = cur[0];
-        }
+        int[] cur = pf.move(curX, curY, locationX, locationY, value);
+        curX = cur[1];
+        curY = cur[0];
     }
 
-    /* @ToDo Scheduler should only send one location at a time. The message should contain keywords
-         "origin" and "destination" which will be used to set the next states for the agents.
-    */
     private void handleProposeMessage(ACLMessage message) throws InterruptedException {
         if (status == Status.IDLE) {
             setStatus(Status.ACTIVE);
@@ -135,13 +187,5 @@ public class PackageTransporter extends TransportAgent {
             e.printStackTrace();
         }
         onWork();
-    }
-
-    /*
-     * @brief Used to update the string displayed on the map representing the agent.
-     * Used mainly for updating the leader's node value to the group node value.
-     */
-    public void updateNodeValue(char value) {
-        pf.updateNode(curX, curY, value);
     }
 }

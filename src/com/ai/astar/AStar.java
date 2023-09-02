@@ -59,7 +59,7 @@ public class AStar {
     }
 
     public void clearNode(int col, int row) {
-        this.searchArea[row][col] = new Node(row, col);
+        this.searchArea[row][col].setBlock(false);
     }
 
     /**
@@ -276,7 +276,7 @@ public class AStar {
         this.diagonalCost = diagonalCost;
     }
 
-    public void updateNode(int col, int row, char value) {
-        this.searchArea[col][row].setValue(String.valueOf(value));
+    public void updateNode(int col, int row, String value) {
+        this.searchArea[col][row].setValue(value);
     }
 }

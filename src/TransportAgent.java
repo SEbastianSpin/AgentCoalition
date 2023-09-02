@@ -18,6 +18,8 @@ public class TransportAgent extends Agent {
     private static int nextId = 0;
     public AStar pf;
     public int id;
+    public String value;
+
     int curX, curY, width, height;
     protected Status status;
     private double probability; // probability of breaking down
@@ -31,6 +33,7 @@ public class TransportAgent extends Agent {
         this.pf = pf;
         this.curX = X;
         this.curY = Y;
+        value = String.valueOf(id);
     }
 
     public void setStatus(Status newState) { //Will be used to change the state of agent
