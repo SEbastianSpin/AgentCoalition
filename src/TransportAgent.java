@@ -6,6 +6,7 @@ import jade.domain.FIPAAgentManagement.Property;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
+
 import java.util.Random;
 
 enum Status {
@@ -18,36 +19,43 @@ public class TransportAgent extends Agent {
     private static int nextId = 0;
     public AStar pf;
     public int id;
-    int curX, curY, width, height;
+
+    int curX, curY;
     protected Status status;
 
 
     private Random random;
     protected double reliabiltiy; // probability of staying active
     private int age; //time it spends till breakdown
-    private double lambda =0.00333333333;
+    private double lambda = 0.00333333333;
 
-    public TransportAgent(AStar pf, int X, int Y){
+    public String value;
+
+    public TransportAgent(AStar pf, int X, int Y) {
         this.status = Status.IDLE; //It must be idle initially
         this.id = nextId++;
         this.reliabiltiy = 1; //initially each robot has the value 1
+
+
         this.random = new Random();
         this.pf = pf;
         this.curX = X;
         this.curY = Y;
+        value = String.valueOf(id);
     }
-    protected void startAging(){
-        addBehaviour(new TickerBehaviour(this,2000) {
+
+    protected void startAging() {
+        addBehaviour(new TickerBehaviour(this, 2000) {
             @Override
             protected void onTick() {
-                if(status == Status.ACTIVE){
+                if (status == Status.ACTIVE) {
                     age++;
-                    reliabiltiy = Math.exp(-lambda*age);
-                     if (random.nextDouble()%1 > reliabiltiy) { // has to change to States.Active
+                    reliabiltiy = Math.exp(-lambda * age);
+                    if (random.nextDouble() % 1 > reliabiltiy) { // has to change to States.Active
                         setStatus(Status.BROKEN);
-                        age=0;
+                        age = 0;
                         System.out.println(getName() + " has broken down");
-                     }
+                    }
                 }
             }
         });
@@ -77,9 +85,10 @@ public class TransportAgent extends Agent {
             fe.printStackTrace();
         }
     }
+
     @Override
     protected void setup() {
 
-
     }
+
 }
