@@ -13,28 +13,27 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AgentTransporter extends TransportAgent {
     public AgentTransporter(AStar pf, int startX, int startY) {
         super(pf, startX, startY);
+        type = "AgentTransporter";
     }
 
+    private void messageHandler(){
+        addBehaviour(new CyclicBehaviour() {
+            @Override
+            public void action() {
+                ACLMessage rcv = receive();
+                switch (rcv.getPerformative()){
+                    case ACLMessage.REQUEST -> {
+                        //AGENT WILL MOVE TO THE BROKEN AGENT.
+                    }
+                }
+                block();
+            }
+        });
+    }
     protected void setup() {
 
         System.out.println("Hello! AGENT-TRANSPORTER "+getAID().getName()+" is ready.");
-
-        DFAgentDescription agentDescription = new DFAgentDescription();
-        agentDescription.setName(getAID());
-
-        ServiceDescription serviceDescription = new ServiceDescription();
-        serviceDescription.setType("AgentTransporter");
-        serviceDescription.setName(getLocalName() + "-TransportAgent");
-        serviceDescription.addProperties(new Property("Status",this.status));
-        agentDescription.addServices(serviceDescription);
-
-        try {
-            DFService.register(this, agentDescription);
-        } catch (FIPAException e) {
-            e.printStackTrace();
-        }
-
-
+        registerAgents();
     }
 
 

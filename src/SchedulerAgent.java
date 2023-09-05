@@ -5,6 +5,7 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.TickerBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import jade.domain.FIPAAgentManagement.Property;
 import jade.domain.FIPAAgentManagement.SearchConstraints;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
@@ -94,11 +95,13 @@ public class SchedulerAgent extends Agent {
             SearchConstraints c = new SearchConstraints();
             long l = agentNo;
             c.setMaxResults(l);
+            c.getMaxDepth();
             DFAgentDescription template = new DFAgentDescription();
             ServiceDescription sd = new ServiceDescription();
+            sd.addProperties(new Property("Status", state));
             sd.setType(dfSerivce);
             template.addServices(sd);
-            result = DFService.search(this, template);
+            result = DFService.search(this, template,c);
 
         } catch (FIPAException e) {
             e.printStackTrace();
@@ -110,8 +113,12 @@ public class SchedulerAgent extends Agent {
     private void detectBreakout() //THIS FUNCTION WILL DETECT BREAKOUT AND SEND MESSAGE (CONTAINS COORDINATES OF BROKEN AGENT TO THE AGENTRANSPOTER .
     {
         ArrayList<Integer> Coordinates = new ArrayList<>();
-        DFAgentDescription[] result = searchAgents("PackageTransporter", Status.BROKEN,1); // DETECTS BROKEN PackageTransporters.
-
+        DFAgentDescription[] brokenAgent = searchAgents("PackageTransporter", Status.BROKEN,1); // DETECTS BROKEN PackageTransporters.
+        DFAgentDescription[] agentTransporter = searchAgents("AgentTransporter", Status.IDLE,1);
+        ACLMessage message = new ACLMessage(ACLMessage.REQUEST);
+        //message.setContent(); The destination (location of broken agent will be the content)
+        message.addReceiver(agentTransporter[0].getName());
+        send(message);
     }
 
     /*
@@ -203,6 +210,7 @@ public class SchedulerAgent extends Agent {
             assignment.addReceiver(agent);
             send(assignment);
             adjust++;
+
         }
 
     }
@@ -218,6 +226,7 @@ public class SchedulerAgent extends Agent {
         System.out.println("Debug-Scheduler: Hello! Scheduler-agent " + getAID().getName() + " is ready.");
         addBehaviour(new TickerBehaviour(this, 2000) {
             public void onTick() {
+                detectBreakout();
                 listenAgents();
                 assignTask();
             }

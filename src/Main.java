@@ -54,15 +54,24 @@ public class Main {
                 e.printStackTrace();
             }
 
-            SchedulerAgent schedulerAgent = new SchedulerAgent(packageTaskQueue);
-            try {
-                AgentController schedulerController = container.acceptNewAgent("SchedulerAgent", schedulerAgent);
-                schedulerController.start();
-            } catch (StaleProxyException e) {
-                e.printStackTrace();
-            }
 
         };
+
+        SchedulerAgent schedulerAgent = new SchedulerAgent(packageTaskQueue);
+        try {
+            AgentController schedulerController = container.acceptNewAgent("SchedulerAgent", schedulerAgent);
+            schedulerController.start();
+        } catch (StaleProxyException e) {
+            e.printStackTrace();
+        }
+        AgentTransporter agentTransporter = new AgentTransporter(pf, 0, 0);
+        try{
+            AgentController agentController = container.acceptNewAgent("AgentTransporter1", agentTransporter);
+            agentController.start();
+        }
+        catch (StaleProxyException e){
+            e.printStackTrace();
+        }
     }
     public static void printMap(AStar pf)
     {
@@ -86,13 +95,13 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("Hello world!");
         Random random = new Random();
-        int rows = 6;
-        int cols = 6;
+        int rows = 10;
+        int cols = 10;
         AStar aStar = new AStar(rows, cols);
         Queue<PackageTask> packageTaskQueue = generatePackageTasks(2, rows, cols);
 
         System.out.println(packageTaskQueue);
-        createAgents(2, packageTaskQueue,aStar);
+        createAgents(3, packageTaskQueue,aStar);
         ScheduledExecutorService executorTasks = Executors.newScheduledThreadPool(1); //Periodically adding new tasks
         ScheduledExecutorService executorPrintMap = Executors.newScheduledThreadPool(1);
 

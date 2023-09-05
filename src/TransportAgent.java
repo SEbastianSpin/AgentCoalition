@@ -20,10 +20,10 @@ public class TransportAgent extends Agent {
     public AStar pf;
     public int id;
 
-    int curX, curY;
+    protected int curX, curY;
     protected Status status;
 
-
+    protected String type;
     private Random random;
     protected double reliabiltiy; // probability of staying active
     private int age; //time it spends till breakdown
@@ -51,6 +51,7 @@ public class TransportAgent extends Agent {
                 if (status == Status.ACTIVE) {
                     age++;
                     reliabiltiy = Math.exp(-lambda * age);
+                    System.out.println("Debug-Reliability-Transport "+ id +" = "+ reliabiltiy);
                     if (random.nextDouble() % 1 > reliabiltiy) { // has to change to States.Active
                         setStatus(Status.BROKEN);
                         age = 0;
@@ -60,11 +61,22 @@ public class TransportAgent extends Agent {
             }
         });
 
-
-
-
     }
+    protected void registerAgents(){
+        DFAgentDescription agentDescription = new DFAgentDescription();
 
+        ServiceDescription serviceDescription = new ServiceDescription();
+        serviceDescription.setType(type);
+        serviceDescription.setName(getLocalName() + "-TransportAgent");
+        serviceDescription.addProperties(new Property("Status", this.status));
+        agentDescription.addServices(serviceDescription);
+
+        try {
+            DFService.register(this, agentDescription);
+        } catch (FIPAException e) {
+            e.printStackTrace();
+        }
+    }
     public void setStatus(Status newState) { //Will be used to change the state of agent
         this.status = newState;
 
@@ -74,13 +86,14 @@ public class TransportAgent extends Agent {
 
         // Create a new service description with the updated state property
         ServiceDescription serviceDescription = new ServiceDescription();
-        serviceDescription.setType("TransportAgent");
+        serviceDescription.setType(this.type);
         serviceDescription.setName(getLocalName() + "-TransportAgent");
         serviceDescription.addProperties(new Property("Status", this.status));
         dfd.addServices(serviceDescription);
 
         try {
             DFService.modify(this, dfd);
+
         } catch (FIPAException fe) {
             fe.printStackTrace();
         }

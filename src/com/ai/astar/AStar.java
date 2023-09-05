@@ -207,8 +207,7 @@ public class AStar {
         this.initialNode = initialNode;
     }
 
-<<<<<<< HEAD
-=======
+
     /*
      * @brief Return string array map.
      */
@@ -230,7 +229,7 @@ public class AStar {
         return map;
     }
 
->>>>>>> master
+
     public int[] move(int startX, int startY, int goalX, int goalY, String value) {
         lock.lock();
         openList.clear();

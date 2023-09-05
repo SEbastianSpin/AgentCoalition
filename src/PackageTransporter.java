@@ -1,6 +1,7 @@
 import com.ai.astar.AStar;
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
+import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.TickerBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
@@ -14,14 +15,18 @@ import jade.lang.acl.UnreadableException;
 import java.util.List;
 import java.util.Objects;
 
+import static java.lang.Thread.sleep;
+
 public class PackageTransporter extends TransportAgent {
     List<AID> group;
     private int state = 1;
     private AID schedulerAID;
     private int startX, startY, goalX, goalY, taskId;
 
+
     public PackageTransporter(AStar pf, int startX, int startY) {
         super(pf, startX, startY);
+        type = "PackageTransporter";
     }
 
     private void onWork() {
@@ -36,11 +41,12 @@ public class PackageTransporter extends TransportAgent {
      * State 4 is for the movement as a group to the destination of the task.
      * State 5 is on completion of a task and the disbanding of the group.
      */
-    Behaviour PackageTransporterBehavior = new TickerBehaviour(this, 2000) {
+        Behaviour PackageTransporterBehavior = new TickerBehaviour(this,2000) {
         public void onTick() {
+
             switch (state) {
                 case (1)-> {
-                    System.out.println("Debug-Transporter-" + id + ": In State 1.");
+                    System.out.println("Debug-Transporter-" + id + ": In State 1."+status);
                     ACLMessage rcv = receive();
                     if (rcv != null) {
                         processMessageFromScheduler(rcv);
@@ -51,6 +57,7 @@ public class PackageTransporter extends TransportAgent {
                     }
                 }
                 case (2) -> {
+
                     moveToLocation(startX, startY);
                     if (curX == startX && curY == startY) {
                         state = 1;
@@ -79,6 +86,7 @@ public class PackageTransporter extends TransportAgent {
                         state = 5;
                         System.out.println("Debug-Transporter-" + id + ": Reached the destination.");
                         informGroupMembers();
+
                     }
                 }
                 case (5) -> {
@@ -89,10 +97,6 @@ public class PackageTransporter extends TransportAgent {
             }
         }
 
-        public void takeDown() {
-            setStatus(Status.IDLE);
-            stop();
-        }
     };
 
     /*
@@ -156,6 +160,7 @@ public class PackageTransporter extends TransportAgent {
     }
 
     public void moveToLocation(int locationX, int locationY) {
+
         int[] cur = pf.move(curX, curY, locationX, locationY, value);
         curX = cur[1];
         curY = cur[0];
@@ -185,21 +190,7 @@ public class PackageTransporter extends TransportAgent {
     protected void setup() {
 
         System.out.println("Debug-Transporter-" + id + ": Agent" + getAID().getName() + " is ready.");
-
-        DFAgentDescription agentDescription = new DFAgentDescription();
-        agentDescription.setName(getAID());
-
-        ServiceDescription serviceDescription = new ServiceDescription();
-        serviceDescription.setType("PackageTransporter");
-        serviceDescription.setName(getLocalName() + "-TransportAgent");
-        serviceDescription.addProperties(new Property("Status", this.status));
-        agentDescription.addServices(serviceDescription);
-
-        try {
-            DFService.register(this, agentDescription);
-        } catch (FIPAException e) {
-            e.printStackTrace();
-        }
+        registerAgents();
         startAging();
         onWork();
     }
