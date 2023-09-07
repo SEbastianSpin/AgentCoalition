@@ -85,6 +85,8 @@ public class PackageTransporter extends TransportAgent {
                         send(informMsg);
                         state = 5;
                         System.out.println("Debug-Transporter-" + id + ": Reached the destination.");
+                        value = String.valueOf(id);
+                        pf.clearNode(curX, curY);
                         informGroupMembers();
 
                     }
@@ -123,6 +125,7 @@ public class PackageTransporter extends TransportAgent {
         curY = goalY;
         state = 5;
         System.out.println("Debug-Transporter-" + id + ": Reached the destination. Message received from leader");
+
     }
 
     private void processMessageFromScheduler(ACLMessage message) {
@@ -141,14 +144,16 @@ public class PackageTransporter extends TransportAgent {
             case ACLMessage.REQUEST -> System.out.println("Debug-Transporter-" + id + " " + message.getContent() + "");
             case ACLMessage.INFORM -> {
                 if(message.hasByteSequenceContent()) {
-                    state = 4;
-                    value = "A"; // Currently sets group to A by default (Placeholder).
-                    pf.updateNode(curX, curY, "A");
                     try {
                         group = (List<AID>) message.getContentObject();
                     } catch (UnreadableException e) {
                         throw new RuntimeException(e);
                     }
+                }
+                else if(message.getContent().contains("leader"))
+                {
+                    value = message.getContent().split(":")[1];
+                    state = 4;
                 }
                 else
                 {
@@ -160,7 +165,7 @@ public class PackageTransporter extends TransportAgent {
     }
 
     public void moveToLocation(int locationX, int locationY) {
-
+        System.out.println("Debug-Transporter-" + id + ": Current Pos: (" + curX + "," + curY  + ") Goal: (" + locationX + "," + locationY  + ") State: "  + state);
         int[] cur = pf.move(curX, curY, locationX, locationY, value);
         curX = cur[1];
         curY = cur[0];

@@ -19,8 +19,8 @@ public class Main {
         Queue<PackageTask> packageTaskQueue = new ArrayDeque<>();
 
         for(int id=0; id<numTasks; id++){
-            int[][] origin = {{random.nextInt(rowBound), random.nextInt(colBound)}};
-            int[][] destination = {{random.nextInt(rowBound), random.nextInt(colBound)}};
+            int[][] origin = {{random.nextInt(rowBound - 1), random.nextInt(colBound - 1)}};
+            int[][] destination = {{random.nextInt(rowBound - 1), random.nextInt(colBound - 1)}};
 //            float weight = (random.nextBoolean()) ? 200f : 400f;
             float weight = 200f;
             Package pkg = new Package(weight, random.nextInt());
@@ -95,8 +95,8 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("Hello world!");
         Random random = new Random();
-        int rows = 10;
-        int cols = 10;
+        int rows = 6;
+        int cols = 6;
         AStar aStar = new AStar(rows, cols);
         Queue<PackageTask> packageTaskQueue = generatePackageTasks(2, rows, cols);
 

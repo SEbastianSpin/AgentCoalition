@@ -67,6 +67,8 @@ public class SchedulerAgent extends Agent {
             message.setContentObject((Serializable) agents);
             message.addReceiver(agents.get(0));
             send(message);
+            message.setContent("leader, group value is:"+ (char)('A' + (agentTaskId % 26)));
+            send(message);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -135,7 +137,10 @@ public class SchedulerAgent extends Agent {
         switch (rcv.getPerformative()) {
             case ACLMessage.INFORM -> {
                 if (rcv.getContent().contains("Completed")) {
+                    int taskID = Integer.parseInt(rcv.getContent().split(":")[1]);
                     System.out.println("Debug-Scheduler: Task " + rcv.getContent().split(":")[1] + " Completed");
+                    agentsAtOriginCount.remove(taskID);
+                    taskGroupMap.remove(taskID);
                 } else {
                     String[] parts = rcv.getContent().split(",");
                     String content = rcv.getContent();
