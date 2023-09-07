@@ -14,17 +14,18 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class Main {
+    public static int taskID = 0;
     public static Queue<PackageTask> generatePackageTasks(int numTasks, int rowBound, int colBound) {
         Random random = new Random();
         Queue<PackageTask> packageTaskQueue = new ArrayDeque<>();
 
-        for(int id=0; id<numTasks; id++){
+        for(int i = 0; i <numTasks; i++){
             int[][] origin = {{random.nextInt(rowBound - 1), random.nextInt(colBound - 1)}};
             int[][] destination = {{random.nextInt(rowBound - 1), random.nextInt(colBound - 1)}};
 //            float weight = (random.nextBoolean()) ? 200f : 400f;
             float weight = 200f;
             Package pkg = new Package(weight, random.nextInt());
-            PackageTask task = new PackageTask(id, origin, destination, pkg);
+            PackageTask task = new PackageTask(taskID++, origin, destination, pkg);
             packageTaskQueue.add(task);
         }
 
@@ -95,13 +96,13 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("Hello world!");
         Random random = new Random();
-        int rows = 6;
-        int cols = 6;
+        int rows = 10;
+        int cols = 10;
         AStar aStar = new AStar(rows, cols);
         Queue<PackageTask> packageTaskQueue = generatePackageTasks(2, rows, cols);
 
         System.out.println(packageTaskQueue);
-        createAgents(3, packageTaskQueue,aStar);
+        createAgents(6, packageTaskQueue,aStar);
         ScheduledExecutorService executorTasks = Executors.newScheduledThreadPool(1); //Periodically adding new tasks
         ScheduledExecutorService executorPrintMap = Executors.newScheduledThreadPool(1);
 

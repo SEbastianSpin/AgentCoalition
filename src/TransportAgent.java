@@ -26,7 +26,7 @@ public class TransportAgent extends Agent {
     protected String type;
     private Random random;
     protected double reliabiltiy; // probability of staying active
-    private int age; //time it spends till breakdown
+    private double age; //time it spends till breakdown
     private double lambda = 0.00333333333;
 
     public String value;
@@ -34,7 +34,7 @@ public class TransportAgent extends Agent {
     public TransportAgent(AStar pf, int X, int Y) {
         this.status = Status.IDLE; //It must be idle initially
         this.id = nextId++;
-        this.reliabiltiy = 1; //initially each robot has the value 1
+        this.reliabiltiy = 100; //initially each robot has the value 1
 
 
         this.random = new Random();
@@ -51,11 +51,11 @@ public class TransportAgent extends Agent {
                 if (status == Status.ACTIVE) {
                     age++;
                     reliabiltiy = Math.exp(-lambda * age);
-                    System.out.println("Debug-Reliability-Transport "+ id +" = "+ reliabiltiy);
+                    System.out.println("Debug-Transport "+ id +" Reliability = "+ reliabiltiy);
                     if (random.nextDouble() % 1 > reliabiltiy) { // has to change to States.Active
-                        setStatus(Status.BROKEN);
+                        //setStatus(Status.BROKEN);
                         age = 0;
-                        System.out.println(getName() + " has broken down");
+                        //System.out.println(getName() + " has broken down");
                     }
                 }
             }
