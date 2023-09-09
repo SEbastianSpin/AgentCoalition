@@ -1,203 +1,254 @@
 import agents.PackageTask;
 import jade.core.AID;
 import jade.core.Agent;
-import jade.core.behaviours.*;
+import jade.core.behaviours.Behaviour;
+import jade.core.behaviours.CyclicBehaviour;
+import jade.core.behaviours.TickerBehaviour;
 import jade.domain.DFService;
-import jade.domain.FIPAAgentManagement.Property;
-import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import jade.domain.FIPAAgentManagement.Property;
+import jade.domain.FIPAAgentManagement.SearchConstraints;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
+import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.*;
-
 
 import static java.lang.Thread.sleep;
 
 
 
-enum Statuss {
-    ACTIVE,
-    IDLE,
-    BROKEN
-}
-
+/*
+ * @brief Scheduler agent class which is responsible for converting tasks to packages, for creating groups
+ * of transport agents, for sending task locations and handling messages received from transport agents.
+ */
 public class SchedulerAgent extends Agent {
-    private Queue<PackageTask> Task;
 
-    private Map<Integer, List<AID>> packageGroupMap = new HashMap<>(); // to track agents per package
-    private Map<Integer, Integer> agentsAtOriginCount = new HashMap<>();// // package id vs count of agents at origin
+    /*
+     * @brief Queue of pending tasks.
+     */
+    private final Queue<PackageTask> Task;
+
+    /*
+     * @brief Dictionary with key as a task ID and value as group of agents assigned to the task.
+     * Used to keep track of the group of agents associated with a task.
+     */
+    private final Map<Integer, List<AID>> taskGroupMap = new HashMap<>();
 
 
+    /*
+     * @brief Dictionary with key as a task ID and value as the count of agents that reached
+     * the location of the task. Used for knowing how many agents reached the location of the task.
+     */
+    private final Map<Integer, Integer> agentsAtOriginCount = new HashMap<>();
+
+    /*
+     * @brief Constructor to initialize task queue.
+     */
     public SchedulerAgent(Queue<PackageTask> packageTaskQueue) {
         Task = packageTaskQueue;
     }
 
-   // private DFAgentDescription[] searchAgents(String dfSerivce, States state) { //When we need to assing more than 1 robot I will add No of agent parameter
-   private DFAgentDescription[] searchAgents(String dfSerivce, Statuss state) {
+    /*
+     * @brief Inform agents to proceed to destination as a group. Used once all the agents reach the
+     * location of the package.
+     */
+    private void informAgentsToProceedToDestination(int agentTaskId) {
+        List<AID> agents = taskGroupMap.get(agentTaskId);
+
+        /*
+         * Sends message to the group leader with a queue of the group members. The group leader
+         * moves on behalf of the group and informs the rest of the group members on the completion
+         * of the task.
+         */
+        try {
+            ACLMessage message = new ACLMessage(ACLMessage.INFORM);
+            message.setContentObject((Serializable) agents);
+            message.addReceiver(agents.get(0));
+            send(message);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        /*
+         * Normal message to other members in the group. Causes them to "zone out" and wait for message
+         * from the group leader
+         */
+        for(int i = 1; i < agents.size(); i++) {
+            ACLMessage message = new ACLMessage(ACLMessage.INFORM);
+            message.setContent("Proceed to destination");
+            message.addReceiver(agents.get(i));
+            send(message);
+        }
+    }
+
+    /*
+     * @brief searches for agents based on the specified state.
+     * @params The service of the agent type requested and the status,
+     * typically uses package dfService as PackageTransporter with state as idle.
+     */
+    private DFAgentDescription[] searchAgents(String dfSerivce, Status state,int agentNo) {
         DFAgentDescription[] result = null;
 
         try {
-
+            SearchConstraints c = new SearchConstraints();
+            long l = agentNo;
+            c.setMaxResults(l);
+            c.getMaxDepth();
             DFAgentDescription template = new DFAgentDescription();
             ServiceDescription sd = new ServiceDescription();
+            sd.addProperties(new Property("Status", state));
             sd.setType(dfSerivce);
-           // sd.addProperties(new Property("Status", state)); // Filtering only IDLE agents
-            //When the program stars Scheduler agent search for all agents and save them in idleAgents list to be used.
             template.addServices(sd);
-            result = DFService.search(this, template);
-//          for (DFAgentDescription dfad : result) { /it will be used in future
-//
-//          }
+            result = DFService.search(this, template,c);
 
         } catch (FIPAException e) {
             e.printStackTrace();
         }
-
         return result;
     }
 
+
+    private void detectBreakout() //THIS FUNCTION WILL DETECT BREAKOUT AND SEND MESSAGE (CONTAINS COORDINATES OF BROKEN AGENT TO THE AGENTRANSPOTER .
+    {
+        ArrayList<Integer> Coordinates = new ArrayList<>();
+        DFAgentDescription[] brokenAgent = searchAgents("PackageTransporter", Status.BROKEN,1); // DETECTS BROKEN PackageTransporters.
+        DFAgentDescription[] agentTransporter = searchAgents("AgentTransporter", Status.IDLE,1);
+        ACLMessage message = new ACLMessage(ACLMessage.REQUEST);
+        //message.setContent(); The destination (location of broken agent will be the content)
+        message.addReceiver(agentTransporter[0].getName());
+        send(message);
+    }
+
+    /*
+     * @brief listen to incoming messages from transport agents.
+     */
     private void listenAgents() {
-        addBehaviour(new CyclicBehaviour(this) {
-            @Override
-            public void action() {
-                ACLMessage rcv = receive();
-                if (rcv != null) {
-                    switch (rcv.getPerformative()) {
-                        case ACLMessage.INFORM:
+        ACLMessage rcv = receive();
 
-                            String[] parts = rcv.getContent().split(",");
-                            String content = rcv.getContent();
-                            int agentTaskId = Integer.parseInt(parts[0].trim());//ox and oy can be used if the robot isnt near the box and wants go to it
+        if(rcv == null) {
+            System.out.println("Debug-Scheduler: No message received");
+            return;
+        }
 
-                            agentsAtOriginCount.put(agentTaskId, agentsAtOriginCount.getOrDefault(agentTaskId, 0) + 1);
-                            if(agentsAtOriginCount.get(agentTaskId) == packageGroupMap.get(agentTaskId).size()){
+        switch (rcv.getPerformative()) {
+            case ACLMessage.INFORM -> {
+                if (rcv.getContent().contains("Completed")) {
+                    int taskID = Integer.parseInt(rcv.getContent().split(":")[1]);
+                    System.out.println("Debug-Scheduler: Task " + rcv.getContent().split(":")[1] + " Completed");
+                    agentsAtOriginCount.remove(taskID);
+                    taskGroupMap.remove(taskID);
+                }
+                else if(rcv.getContent().contains("broken")){
 
-//                                for(AID agent : packageGroupMap.get(agentTaskId)) {
-//                                    ACLMessage proceedMsg = new ACLMessage(ACLMessage.INSTRUCT);
-//                                    proceedMsg.addReceiver(agent);
-//                                    proceedMsg.setContent("Proceed to destination");
-//                                    send(proceedMsg);
-//                                }
-// ALSO that   packageGroupMap should be removed or something needs to be done
-                                System.out.println("For "+agentTaskId+" All agent reached Origin");
+                    int X = Integer.parseInt(rcv.getContent().split(" ")[3]);
+                    int Y = Integer.parseInt(rcv.getContent().split(" ")[4]);
+                    DFAgentDescription[] agentTransporter = searchAgents("AgentTransporter", Status.IDLE,1);
+                    ACLMessage message = new ACLMessage(ACLMessage.REQUEST);
+                    message.setContent(X+" "+Y);
+                    message.addReceiver((AID)agentTransporter[0].getName());
+                    send(message);
 
-                            }
-
-                            // Needs to be updates
-                            ///System.out.println(rcv.getSender() + " has done its assignment");
-                            break;
-                        case ACLMessage.ACCEPT_PROPOSAL:
-                            System.out.println("The task has been accepted by" + rcv.getSender());
-                            break;
+                }
+                else {
+                    String[] parts = rcv.getContent().split(",");
+                    String content = rcv.getContent();
+                    int agentTaskId = Integer.parseInt(parts[0].trim()); // ox and oy can be used if the robot isnt near the box and wants go to it
+                    agentsAtOriginCount.put(agentTaskId, agentsAtOriginCount.getOrDefault(agentTaskId, 0) + 1);
+                    if (agentsAtOriginCount.get(agentTaskId) == taskGroupMap.get(agentTaskId).size()) {
+                        System.out.println("Debug-Scheduler: For " + agentTaskId + " All agents reached origin");
+                        informAgentsToProceedToDestination(agentTaskId);
                     }
                 }
-                block();
             }
-        });
+            case ACLMessage.ACCEPT_PROPOSAL -> {
+                System.out.println("Debug-Scheduler: The task has been accepted by" + rcv.getSender());
+            }
+        }
+    }
+
+    private void assignTask() {
+        List<AID> group = new ArrayList<>();
+        if (!Task.isEmpty()) {
+            PackageTask task = Task.poll(); // is removed
+            int requiredAgent = task.getNumAgentsRequired();
+            DFAgentDescription[] idleAgents = searchAgents("PackageTransporter", Status.IDLE,requiredAgent);
+
+            if (idleAgents.length < requiredAgent) {
+                System.out.println("Debug-Scheduler: There is no available amount of Transport agents for task assignment");
+                Task.add(task);
+            }
+            else {
+                    for (int i = idleAgents.length - 1; i >= 0; i--) {
+                           group.add(idleAgents[i].getName());
+                    }
+                    Arrays.fill(idleAgents,null);
+                    System.out.println("Debug-Scheduler: Task needs: " + task.getNumAgentsRequired());
+                    System.out.println("Debug-Scheduler: Package Origin - " + task.origin[0][0] + "," + task.origin[0][1] + ", Destination - " + (task.destination[0][0]) + "," + task.destination[0][1] + " Task ID - " + task.id);
+                    sendOriginAndDestinationToGroup(group, task);
+                    taskGroupMap.put(task.id, group);
+                    System.out.println(taskGroupMap);
+                }
+            }
+    }
+
+
+    private void sendOriginAndDestinationToGroup(List<AID> group, Task task) {
+        int adjust = 0;
+        for (AID agent : group) {
+
+            int xAdjust = 0, yAdjust = 0;
+
+            switch (adjust) {
+                case 0:
+                    // No adjustment for the first agent
+                    xAdjust = 0;
+                    yAdjust = 0;
+                    break;
+                case 1:
+                    xAdjust = 1;
+                    yAdjust = 0;
+                    break;
+                case 2:
+                    xAdjust = 0;
+                    yAdjust = 1;
+                    break;
+                case 3:
+                    xAdjust = 1;
+                    yAdjust = 1;
+                    break;
+            }
+
+            ACLMessage assignment = new ACLMessage(ACLMessage.PROPOSE);
+            assignment.setContent((task.origin[0][0] + xAdjust) + "," + (task.origin[0][1] + yAdjust) + "," + task.destination[0][0] + "," + task.destination[0][1] + "," + task.id);
+            assignment.addReceiver(agent);
+            send(assignment);
+            adjust++;
+
+        }
 
     }
 
-    private void assignTask(){
-        addBehaviour(new TickerBehaviour(this, 2000) {  //2 seconds
-            @Override
-            protected void onTick() {
-
-                List<AID> groupAgents = new ArrayList<>();
-                if (!Task.isEmpty()) {
-                    // DFAgentDescription[] idleAgents = searchAgents("PackageTransporter", States.IDLE);
-                    DFAgentDescription[] idleAgents = searchAgents("PackageTransporter", Statuss.IDLE);
-                    Queue<DFAgentDescription> idleAgentsQueue = new LinkedList<>(Arrays.asList(idleAgents));
-
-
-                    if (idleAgentsQueue.isEmpty()) {
-                        //System.out.println("There is no available Transport agents for task assignment");
-                    }
-                    else {
-                        PackageTask task =Task.poll(); // is removed
-                        if (idleAgentsQueue.size() < task.getNumAgentsRequired()) {
-                            System.out.println("No agents available to assign.");
-                            Task.add(task); // It is not done so need to be placed back
-                        } else {
-                            while (groupAgents.size() < task.getNumAgentsRequired() && !idleAgentsQueue.isEmpty()) {
-                                groupAgents.add(idleAgentsQueue.poll().getName());
-                            }
-
-                            System.out.println("Task needs: "+ task.getNumAgentsRequired());
-                            System.out.println("Package Origin - "+ task.origin[0][0]+","+task.origin[0][1] + ", Destination - " + (task.destination[0][0])+","+task.destination[0][1]
-                                            + "Task ID - " + task.id
-                                    );
-                            int adjust = 0;
-                            for (AID groupAgent : groupAgents) {
-
-                                int xAdjust = 0, yAdjust = 0;
-
-                                switch (adjust) {
-                                    case 0:
-                                        // No adjustment for the first agent
-                                        xAdjust = 0;
-                                        yAdjust = 0;
-                                        break;
-                                    case 1:
-                                        xAdjust = 1;
-                                        yAdjust = 0;
-                                        break;
-                                    case 2:
-                                        xAdjust = 0;
-                                        yAdjust = 1;
-                                        break;
-                                    case 3:
-                                        xAdjust = 1;
-                                        yAdjust = 1;
-                                        break;
-                                }
-
-                                ACLMessage assignment = new ACLMessage(ACLMessage.PROPOSE);
-                                assignment.setContent(
-                                        (task.origin[0][0] + xAdjust) + "," + (task.origin[0][1] + yAdjust) + "," +
-                                                task.destination[0][0] + "," + task.destination[0][1] + "," +
-                                                 task.id
-                                );
-                                adjust++;
-                                //THE LOGIC FOR ASSIGNMENT OF PACKAGES CAN BE IMPLEMENTED SOMEWHERE HERE
-                                assignment.addReceiver(groupAgent);
-                                send(assignment);
-                                adjust++;
-                            }
-                            packageGroupMap.put(task.id, groupAgents);
-                            System.out.println(packageGroupMap);
-
-
-
-            }}}}
-            });
-
-            }
-
-//                 else {
-//                    System.out.println("No tasks available to assign.");
-//                    break;
-//
-//                }
-
-
-
-
 
     @Override
-    protected void setup () {
-
+    protected void setup() {
         try {
             sleep(500);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        System.out.println("Hello! Scheduler-agent " + getAID().getName() + " is ready.");
-
-        listenAgents();
-        assignTask(); // MUST BE WORKING IN LOOP.
-
-
+        System.out.println("Debug-Scheduler: Hello! Scheduler-agent " + getAID().getName() + " is ready.");
+        addBehaviour(new TickerBehaviour(this, 2000) {
+            public void onTick() {
+                listenAgents();
+                assignTask();
+            }
+        });
     }
 
 }
+
+
+

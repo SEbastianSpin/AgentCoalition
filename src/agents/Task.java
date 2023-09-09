@@ -1,10 +1,7 @@
-package agents;
-
 public class Task {
-    public int id;
-    public int[][] origin;
-    public int[][] destination;
-
+    protected int id;
+    protected int[][] origin;
+    protected int[][] destination;
 
     public Task(int id, int[][] origin, int[][] destination) {
         this.id = id;
@@ -12,10 +9,12 @@ public class Task {
         this.destination = destination;
     }
 
-    int  getId(){return id;}
+    int getId() {
+        return id;
+    }
 
-    int[][] getOrigin() {return  origin;}
-
-
+    int[][] getOrigin() {
+        return origin;
+    }
 
 }

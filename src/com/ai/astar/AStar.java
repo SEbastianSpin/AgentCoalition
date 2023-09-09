@@ -1,18 +1,18 @@
 package com.ai.astar;
+
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * A Star Algorithm
  *
  * @author Marcelo Surriabre
- * @version 2.1, 2017-02-23
+ * @contributor Dipankar Purecha
+ * @version 2.2, 2023-07-09
  */
 public class AStar {
     private static int DEFAULT_HV_COST = 10; // Horizontal - Vertical Cost
     private static int DEFAULT_DIAGONAL_COST = 14;
-
     private ReentrantLock lock;
     private int hvCost;
     private int diagonalCost;
@@ -22,8 +22,7 @@ public class AStar {
     private Node initialNode;
     private Node finalNode;
 
-    public AStar(int rows, int cols)
-    {
+    public AStar(int rows, int cols) {
         this.searchArea = new Node[rows][cols];
         lock = new ReentrantLock();
         initialNode = new Node();
@@ -37,6 +36,7 @@ public class AStar {
         this.closedSet = new HashSet<>();
         initializeNodes();
     }
+
     public AStar(int rows, int cols, Node initialNode, Node finalNode, int hvCost, int diagonalCost) {
         lock = new ReentrantLock();
         this.hvCost = hvCost;
@@ -59,15 +59,18 @@ public class AStar {
         this(rows, cols, initialNode, finalNode, DEFAULT_HV_COST, DEFAULT_DIAGONAL_COST);
     }
 
+    public void clearNode(int col, int row) {
+        this.searchArea[row][col].setBlock(false);
+        this.searchArea[row][col].setValue(" ");
+    }
+
     /**
      * @brief Initializes search area with nodes
      */
-    private void initializeNodes()
-    {
+    private void initializeNodes() {
         for (int i = 0; i < searchArea.length; i++) {
             for (int j = 0; j < searchArea[0].length; j++) {
-                Node node = new Node(i, j);
-                this.searchArea[i][j] = node;
+                this.searchArea[i][j] = new Node(i, j);
             }
         }
     }
@@ -76,7 +79,7 @@ public class AStar {
      * @brief Sets the heuristics for each node based on the search area
      */
     private void setNodes() {
-        for(int i = 0; i < searchArea.length; i++) {
+        for (int i = 0; i < searchArea.length; i++) {
             for (int j = 0; j < searchArea[0].length; j++) {
                 this.searchArea[i][j].calculateHeuristic(getFinalNode());
             }
@@ -87,7 +90,7 @@ public class AStar {
         for (int i = 0; i < blocksArray.length; i++) {
             int row = blocksArray[i][0];
             int col = blocksArray[i][1];
-            setBlock(row, col);
+            setBlock(row, col, "X");
         }
     }
 
@@ -193,13 +196,43 @@ public class AStar {
     private void setBlock(int row, int col) {
         this.searchArea[row][col].setBlock(true);
     }
+    private void setBlock(int row, int col, String value) {
+        this.searchArea[row][col].setBlock(true);
+        this.searchArea[row][col].setValue(value);
+    }
 
     public Node getInitialNode() {
         return initialNode;
     }
 
-    public int[] move(int startX, int startY, int goalX, int goalY, String value)
+    public void setInitialNode(Node initialNode) {
+        this.initialNode = initialNode;
+    }
+
+
+    /*
+     * @brief Return string array map.
+     */
+    public String[][] getStringArrayMap()
     {
+        int rows = searchArea.length;
+        int cols = searchArea[0].length;
+        String[][] map = new String[rows][cols];
+        for(int i = 0; i < rows; i++)
+        {
+            for(int j = 0; j < cols; j++)
+            {
+                if(searchArea[i][j].isBlock())
+                    map[i][j] = searchArea[i][j].getValue();
+                else
+                    map[i][j] = " ";
+            }
+        }
+        return map;
+    }
+
+
+    public int[] move(int startX, int startY, int goalX, int goalY, String value) {
         lock.lock();
         openList.clear();
         closedSet.clear();
@@ -211,21 +244,16 @@ public class AStar {
         int[] nextPos;
         List<Node> path = findPath();
         //path found
-        if(!path.isEmpty()) {
+        if (path.size() > 1) {
             Node next = path.get(1);
             nextPos = new int[]{next.getRow(), next.getCol()};
-            next.setBlock(true);
-            next.setValue(value);
+            next.setBlock(true, value);
             this.searchArea[nextPos[0]][nextPos[1]] = next;
-            this.searchArea[startY][startX].setBlock(false);
-        }
-        else //no path found
+            clearNode(startX, startY);
+        } else //no path found
             nextPos = new int[]{startY, startX};
         lock.unlock();
         return nextPos;
-    }
-    public void setInitialNode(Node initialNode) {
-        this.initialNode = initialNode;
     }
 
     public Node getFinalNode() {
@@ -276,4 +304,8 @@ public class AStar {
         this.diagonalCost = diagonalCost;
     }
 
+    public void updateNode(int col, int row, String value) {
+        this.searchArea[col][row].setValue(value);
+        this.searchArea[col][row].setBlock(true);
+    }
 }

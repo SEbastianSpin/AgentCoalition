@@ -1,56 +1,69 @@
-//import jade.core.Agent;
-//import jade.core.behaviours.CyclicBehaviour;
-//import jade.domain.DFService;
-//import jade.domain.FIPAAgentManagement.DFAgentDescription;
-//import jade.domain.FIPAAgentManagement.Property;
-//import jade.domain.FIPAAgentManagement.ServiceDescription;
-//import jade.domain.FIPAException;
-//import jade.lang.acl.ACLMessage;
-//
-//import java.util.concurrent.ConcurrentHashMap;
-//
-//public class AgentTransporter extends TransportAgent {
-//    public AgentTransporter(ConcurrentHashMap factoryMap) {
-//        super(factoryMap);
-//    }
-//
-//    protected void setup() {
-//
-//        System.out.println("Hello! AGENT-TRANSPORTER "+getAID().getName()+" is ready.");
-//
-//        DFAgentDescription agentDescription = new DFAgentDescription();
-//        agentDescription.setName(getAID());
-//
-//        ServiceDescription serviceDescription = new ServiceDescription();
-//        serviceDescription.setType("AgentTransporter");
-//        serviceDescription.setName(getLocalName() + "-TransportAgent");
-//        serviceDescription.addProperties(new Property("Status",this.state));
-//        agentDescription.addServices(serviceDescription);
-//
-//        try {
-//            DFService.register(this, agentDescription);
-//        } catch (FIPAException e) {
-//            e.printStackTrace();
-//        }
-//
-//        addBehaviour(new CyclicBehaviour(this) {
-//            @Override
-//            public void action() {
-//                ACLMessage rcv = receive();
-//                if (rcv != null) {
-//                    switch (rcv.getPerformative()) {
-//                        case ACLMessage.PROPOSE:
-//                       //     handleProposeMessage(rcv);
-//                            break;
-//                        case ACLMessage.REQUEST:
-//                            System.out.println(""+rcv.getContent()+"");
-//                    }
-//                }
-//                block();
-//            }
-//        });
-//    }
-//
-//
-//}
-//
+import com.ai.astar.AStar;
+import jade.core.Agent;
+import jade.core.behaviours.CyclicBehaviour;
+import jade.core.behaviours.TickerBehaviour;
+import jade.domain.DFService;
+import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import jade.domain.FIPAAgentManagement.Property;
+import jade.domain.FIPAAgentManagement.ServiceDescription;
+import jade.domain.FIPAException;
+import jade.lang.acl.ACLMessage;
+
+import java.util.concurrent.ConcurrentHashMap;
+
+public class AgentTransporter extends TransportAgent {
+    int id;
+    public AgentTransporter(AStar pf, int startX, int startY) {
+        super(pf, startX, startY);
+        type = "AgentTransporter";
+    }
+
+    private void messageHandler(){
+        addBehaviour(new CyclicBehaviour() {
+            @Override
+            public void action() {
+                ACLMessage rcv = receive();
+                if(rcv != null) {
+                    switch (rcv.getPerformative()) {
+                        case ACLMessage.REQUEST -> {
+                            //AGENT WILL MOVE TO THE BROKEN AGENT.
+                            goalX = Integer.parseInt(rcv.getContent().split(" ")[0]);
+                            goalY = Integer.parseInt(rcv.getContent().split(" ")[1]);
+                            System.out.println(getAgent()+" I have to save agent at "+goalX+" "+goalY);
+                            setStatus(Status.ACTIVE);
+                        }
+                    }
+                    block();
+                }
+            }
+        });
+    }
+
+    public void moveToRepair(int locationX, int locationY) {
+
+        int[] cur = pf.move(curX, curY, locationX, locationY, "R"+id);
+        curX = cur[1];
+        curY = cur[0];
+    }
+    private void saveAgent(){
+        addBehaviour(new TickerBehaviour(this,2000) {
+            @Override
+            protected void onTick() {
+                if(status == Status.ACTIVE) {
+                    moveToRepair(goalX, goalY);
+                }
+            }
+        });
+
+    }
+    protected void setup() {
+
+        System.out.println("Hello! AGENT-TRANSPORTER "+getAID().getName()+" is ready.");
+        registerAgents();
+        messageHandler();
+        saveAgent();
+    }
+
+
+}
+
