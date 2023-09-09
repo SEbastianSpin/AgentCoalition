@@ -29,6 +29,7 @@ public class AgentTransporter extends TransportAgent {
                             //AGENT WILL MOVE TO THE BROKEN AGENT.
                             goalX = Integer.parseInt(rcv.getContent().split(" ")[0]);
                             goalY = Integer.parseInt(rcv.getContent().split(" ")[1]);
+                            System.out.println(getAgent()+" I have to save agent at "+goalX+" "+goalY);
                             setStatus(Status.ACTIVE);
                         }
                     }
@@ -38,9 +39,9 @@ public class AgentTransporter extends TransportAgent {
         });
     }
 
-    public void moveToLocation(int locationX, int locationY) {
+    public void moveToRepair(int locationX, int locationY) {
 
-        int[] cur = pf.move(curX, curY, locationX, locationY, "R");
+        int[] cur = pf.move(curX, curY, locationX, locationY, "R"+id);
         curX = cur[1];
         curY = cur[0];
     }
@@ -49,7 +50,7 @@ public class AgentTransporter extends TransportAgent {
             @Override
             protected void onTick() {
                 if(status == Status.ACTIVE) {
-                    moveToLocation(goalX, goalY);
+                    moveToRepair(goalX, goalY);
                 }
             }
         });

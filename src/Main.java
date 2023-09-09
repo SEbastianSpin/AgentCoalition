@@ -65,14 +65,24 @@ public class Main {
         } catch (StaleProxyException e) {
             e.printStackTrace();
         }
-        AgentTransporter agentTransporter = new AgentTransporter(pf, 0, 0);
-        try{
-            AgentController agentController = container.acceptNewAgent("AgentTransporter1", agentTransporter);
-            agentController.start();
+
+
+        for (int i = 0; i < 3; i++) {
+            int startX =  9;
+            int startY = (i + 1) % pf.getSearchArea()[0].length;
+
+            try {
+                AgentTransporter agent = new AgentTransporter(pf, startX, startY);
+                AgentController TransportController = container.acceptNewAgent("Repair" + i, agent);
+                TransportController.start();
+            }
+            catch (StaleProxyException e) {
+                e.printStackTrace();
+            }
+
+
         }
-        catch (StaleProxyException e){
-            e.printStackTrace();
-        }
+
     }
     public static void printMap(AStar pf)
     {

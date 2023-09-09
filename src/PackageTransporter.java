@@ -103,6 +103,9 @@ public class PackageTransporter extends TransportAgent {
     /*
      * @brief Used by the leader of the group to inform its group members of completion of a task.
      */
+
+
+
     private void informGroupMembers() {
         for(AID agent : group)
         {
@@ -164,10 +167,12 @@ public class PackageTransporter extends TransportAgent {
     }
 
     public void moveToLocation(int locationX, int locationY) {
-        System.out.println("Debug-Transporter-" + id + ": Current Pos: (" + curX + "," + curY  + ") Goal: (" + locationX + "," + locationY  + ") State: "  + state);
-        int[] cur = pf.move(curX, curY, locationX, locationY, value);
-        curX = cur[1];
-        curY = cur[0];
+        if(this.status == Status.ACTIVE) {
+            System.out.println("Debug-Transporter-" + id + ": Current Pos: (" + curX + "," + curY + ") Goal: (" + locationX + "," + locationY + ") State: " + state);
+            int[] cur = pf.move(curX, curY, locationX, locationY, value);
+            curX = cur[1];
+            curY = cur[0];
+        }
     }
 
     private void handleProposeMessage(ACLMessage message) throws InterruptedException {

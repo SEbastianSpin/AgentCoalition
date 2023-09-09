@@ -30,7 +30,11 @@ public class TransportAgent extends Agent {
     private Random random;
     protected double reliabiltiy; // probability of staying active
     private double age; //time it spends till breakdown
-    private double lambda = 0.00333333333;
+
+
+    private double lambda = 0.05;
+    //private double lambda = 0.00333333333;
+
 
     public String value;
 
@@ -51,7 +55,7 @@ public class TransportAgent extends Agent {
         addBehaviour(new TickerBehaviour(this, 2000) {
             @Override
             protected void onTick() {
-                if (status == Status.ACTIVE) {
+                if (status == Status.ACTIVE && type == "PackageTransporter")  {
                     age++;
                     reliabiltiy = Math.exp(-lambda * age);
                     System.out.println("Debug-Transport "+ id +" Reliability = "+ reliabiltiy);
