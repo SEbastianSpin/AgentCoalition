@@ -7,7 +7,8 @@ import java.util.concurrent.locks.ReentrantLock;
  * A Star Algorithm
  *
  * @author Marcelo Surriabre
- * @version 2.1, 2017-02-23
+ * @contributor Dipankar Purecha
+ * @version 2.2, 2023-07-09
  */
 public class AStar {
     private static int DEFAULT_HV_COST = 10; // Horizontal - Vertical Cost
@@ -60,6 +61,7 @@ public class AStar {
 
     public void clearNode(int col, int row) {
         this.searchArea[row][col].setBlock(false);
+        this.searchArea[row][col].setValue(" ");
     }
 
     /**
@@ -242,12 +244,12 @@ public class AStar {
         int[] nextPos;
         List<Node> path = findPath();
         //path found
-        if (!path.isEmpty()) {
+        if (path.size() > 1) {
             Node next = path.get(1);
             nextPos = new int[]{next.getRow(), next.getCol()};
             next.setBlock(true, value);
             this.searchArea[nextPos[0]][nextPos[1]] = next;
-            this.searchArea[startY][startX].setBlock(false);
+            clearNode(startX, startY);
         } else //no path found
             nextPos = new int[]{startY, startX};
         lock.unlock();
@@ -304,5 +306,6 @@ public class AStar {
 
     public void updateNode(int col, int row, String value) {
         this.searchArea[col][row].setValue(value);
+        this.searchArea[col][row].setBlock(true);
     }
 }

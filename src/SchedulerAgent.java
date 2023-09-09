@@ -67,6 +67,8 @@ public class SchedulerAgent extends Agent {
             message.setContentObject((Serializable) agents);
             message.addReceiver(agents.get(0));
             send(message);
+            message.setContent("leader, group value is:"+ (char)('A' + (agentTaskId % 26)));
+            send(message);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -110,17 +112,6 @@ public class SchedulerAgent extends Agent {
     }
 
 
-    private void detectBreakout() //THIS FUNCTION WILL DETECT BREAKOUT AND SEND MESSAGE (CONTAINS COORDINATES OF BROKEN AGENT TO THE AGENTRANSPOTER .
-    {
-        ArrayList<Integer> Coordinates = new ArrayList<>();
-        DFAgentDescription[] brokenAgent = searchAgents("PackageTransporter", Status.BROKEN,1); // DETECTS BROKEN PackageTransporters.
-        DFAgentDescription[] agentTransporter = searchAgents("AgentTransporter", Status.IDLE,1);
-        ACLMessage message = new ACLMessage(ACLMessage.REQUEST);
-        //message.setContent(); The destination (location of broken agent will be the content)
-        message.addReceiver(agentTransporter[0].getName());
-        send(message);
-    }
-
     /*
      * @brief listen to incoming messages from transport agents.
      */
@@ -135,8 +126,23 @@ public class SchedulerAgent extends Agent {
         switch (rcv.getPerformative()) {
             case ACLMessage.INFORM -> {
                 if (rcv.getContent().contains("Completed")) {
+                    int taskID = Integer.parseInt(rcv.getContent().split(":")[1]);
                     System.out.println("Debug-Scheduler: Task " + rcv.getContent().split(":")[1] + " Completed");
-                } else {
+                    agentsAtOriginCount.remove(taskID);
+                    taskGroupMap.remove(taskID);
+                }
+                else if(rcv.getContent().contains("broken")){
+
+                    int X = Integer.parseInt(rcv.getContent().split(" ")[3]);
+                    int Y = Integer.parseInt(rcv.getContent().split(" ")[4]);
+                    DFAgentDescription[] agentTransporter = searchAgents("AgentTransporter", Status.IDLE,1);
+                    ACLMessage message = new ACLMessage(ACLMessage.REQUEST);
+                    message.setContent(X+" "+Y);
+                    message.addReceiver((AID)agentTransporter[0].getName());
+                    send(message);
+
+                }
+                else {
                     String[] parts = rcv.getContent().split(",");
                     String content = rcv.getContent();
                     int agentTaskId = Integer.parseInt(parts[0].trim()); // ox and oy can be used if the robot isnt near the box and wants go to it
@@ -165,17 +171,17 @@ public class SchedulerAgent extends Agent {
                 Task.add(task);
             }
             else {
-                    for (int i = idleAgents.length - 1; i >= 0; i--) {
-                           group.add(idleAgents[i].getName());
-                    }
-                    Arrays.fill(idleAgents,null);
-                    System.out.println("Debug-Scheduler: Task needs: " + task.getNumAgentsRequired());
-                    System.out.println("Debug-Scheduler: Package Origin - " + task.origin[0][0] + "," + task.origin[0][1] + ", Destination - " + (task.destination[0][0]) + "," + task.destination[0][1] + " Task ID - " + task.id);
-                    sendOriginAndDestinationToGroup(group, task);
-                    taskGroupMap.put(task.id, group);
-                    System.out.println(taskGroupMap);
+                for (int i = idleAgents.length - 1; i >= 0; i--) {
+                    group.add(idleAgents[i].getName());
                 }
+                Arrays.fill(idleAgents,null);
+                System.out.println("Debug-Scheduler: Task needs: " + task.getNumAgentsRequired());
+                System.out.println("Debug-Scheduler: Package Origin - " + task.origin[0][0] + "," + task.origin[0][1] + ", Destination - " + (task.destination[0][0]) + "," + task.destination[0][1] + " Task ID - " + task.id);
+                sendOriginAndDestinationToGroup(group, task);
+                taskGroupMap.put(task.id, group);
+                System.out.println(taskGroupMap);
             }
+        }
     }
 
 
@@ -226,7 +232,6 @@ public class SchedulerAgent extends Agent {
         System.out.println("Debug-Scheduler: Hello! Scheduler-agent " + getAID().getName() + " is ready.");
         addBehaviour(new TickerBehaviour(this, 2000) {
             public void onTick() {
-                detectBreakout();
                 listenAgents();
                 assignTask();
             }
@@ -234,6 +239,3 @@ public class SchedulerAgent extends Agent {
     }
 
 }
-
-
-
