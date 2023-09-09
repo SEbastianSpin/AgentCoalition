@@ -67,8 +67,6 @@ public class SchedulerAgent extends Agent {
             message.setContentObject((Serializable) agents);
             message.addReceiver(agents.get(0));
             send(message);
-            message.setContent("leader, group value is:"+ (char)('A' + (agentTaskId % 26)));
-            send(message);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -111,6 +109,17 @@ public class SchedulerAgent extends Agent {
         return result;
     }
 
+
+    private void detectBreakout() //THIS FUNCTION WILL DETECT BREAKOUT AND SEND MESSAGE (CONTAINS COORDINATES OF BROKEN AGENT TO THE AGENTRANSPOTER .
+    {
+        ArrayList<Integer> Coordinates = new ArrayList<>();
+        DFAgentDescription[] brokenAgent = searchAgents("PackageTransporter", Status.BROKEN,1); // DETECTS BROKEN PackageTransporters.
+        DFAgentDescription[] agentTransporter = searchAgents("AgentTransporter", Status.IDLE,1);
+        ACLMessage message = new ACLMessage(ACLMessage.REQUEST);
+        //message.setContent(); The destination (location of broken agent will be the content)
+        message.addReceiver(agentTransporter[0].getName());
+        send(message);
+    }
 
     /*
      * @brief listen to incoming messages from transport agents.
@@ -171,17 +180,17 @@ public class SchedulerAgent extends Agent {
                 Task.add(task);
             }
             else {
-                for (int i = idleAgents.length - 1; i >= 0; i--) {
-                    group.add(idleAgents[i].getName());
+                    for (int i = idleAgents.length - 1; i >= 0; i--) {
+                           group.add(idleAgents[i].getName());
+                    }
+                    Arrays.fill(idleAgents,null);
+                    System.out.println("Debug-Scheduler: Task needs: " + task.getNumAgentsRequired());
+                    System.out.println("Debug-Scheduler: Package Origin - " + task.origin[0][0] + "," + task.origin[0][1] + ", Destination - " + (task.destination[0][0]) + "," + task.destination[0][1] + " Task ID - " + task.id);
+                    sendOriginAndDestinationToGroup(group, task);
+                    taskGroupMap.put(task.id, group);
+                    System.out.println(taskGroupMap);
                 }
-                Arrays.fill(idleAgents,null);
-                System.out.println("Debug-Scheduler: Task needs: " + task.getNumAgentsRequired());
-                System.out.println("Debug-Scheduler: Package Origin - " + task.origin[0][0] + "," + task.origin[0][1] + ", Destination - " + (task.destination[0][0]) + "," + task.destination[0][1] + " Task ID - " + task.id);
-                sendOriginAndDestinationToGroup(group, task);
-                taskGroupMap.put(task.id, group);
-                System.out.println(taskGroupMap);
             }
-        }
     }
 
 
@@ -239,3 +248,6 @@ public class SchedulerAgent extends Agent {
     }
 
 }
+
+
+

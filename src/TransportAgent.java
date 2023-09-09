@@ -41,7 +41,7 @@ public class TransportAgent extends Agent {
     public TransportAgent(AStar pf, int X, int Y) {
         this.status = Status.IDLE; //It must be idle initially
         this.id = nextId++;
-        this.reliabiltiy = 100; //initially each robot has the value 1
+        this.reliabiltiy = 1; //initially each robot has the value 1
 
 
         this.random = new Random();
@@ -55,7 +55,7 @@ public class TransportAgent extends Agent {
         addBehaviour(new TickerBehaviour(this, 2000) {
             @Override
             protected void onTick() {
-                if (status == Status.ACTIVE && type == "PackageTransporter")  {
+                if (status == Status.ACTIVE) {
                     age++;
                     reliabiltiy = Math.exp(-lambda * age);
                     System.out.println("Debug-Transport "+ id +" Reliability = "+ reliabiltiy);
