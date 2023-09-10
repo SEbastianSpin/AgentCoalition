@@ -7,7 +7,7 @@ public class PackageTask extends Task {
         this.pkg = pkg;
     }
 
-    int getNumAgentsRequired() {
+    public int getNumAgentsRequired() {
         return (int) (pkg.getWeight() / 100);
     }
 }

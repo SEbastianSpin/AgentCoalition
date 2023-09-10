@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import useWebSocket from "react-use-websocket";
-import SmartToyIcon from '@mui/icons-material/SmartToy';
 import Box from '@mui/material/Box';
 import './App.css';
 import Cell from "./Componets/Cell";
+import isEqual from 'lodash/isEqual';
 
 
 import { createTheme } from '@mui/material/styles';
@@ -37,35 +37,35 @@ const theme = createTheme({
 
 
 const Robots = ({ grid }) => {
-    return (
-      <Box sx={{ display: 'flex', flexDirection: 'column', height: '90%', width:"75%" }}>
-        {grid.map((row, rowIndex) => (
-          <Box key={rowIndex} sx={{ display: 'flex', flex: 1 }}>
-            {row.map((cell, cellIndex) => (
-              <Box
-                key={cellIndex}
-                sx={{
-                  flex: 1,
-                  border: '1px solid #ccc',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}
-              >
-              
-                <Cell value={cell}>
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', width: '90%', height: '100%' }}>
+      {grid.map((row, rowIndex) => (
+        <Box key={rowIndex} sx={{ display: 'flex', flexGrow: 1 }}>
+          {row.map((cell, cellIndex) => (
+            <Box
+              key={cellIndex}
+              sx={{
+                flexGrow: 1,
+                border: '1px solid #ccc',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                minHeight: '60px',
+                maxWidth: '120px'
+              }}
+            >
+              <Cell value={cell} />
+            </Box>
+          ))}
+        </Box>
+      ))}
+    </Box>
+  );
+};
 
-                </Cell>
-              </Box>
-            ))}
-          </Box>
-        ))}
-      </Box>
-    );
-  };
 
 export const FactoryMap = () => {
-  const [socketUrl, setSocketUrl] = useState("ws://localhost:8080/mapupdates");
+  const [socketUrl, setSocketUrl] = useState("ws://localhost:4000/mapupdates");
 
   // Instead of just saving the current version, we'll save all versions in an array.
   const [astarArrayVersions, setAstarArrayVersions] = useState([]);
@@ -78,18 +78,22 @@ export const FactoryMap = () => {
 
   useEffect(() => {
     if (lastMessage !== null) {
-      const newData = JSON.parse(lastMessage.data);
-      setAstarArrayVersions(prev => [...prev, newData.astarArray]);
-      setCurrentVersionIndex(prev => prev + 1);
-    }
+        const newData = JSON.parse(lastMessage.data);
 
-  }, [lastMessage]);
+        if (astarArrayVersions.length === 0 || 
+           (astarArrayVersions.length > 0 && 
+           !isEqual(astarArrayVersions[astarArrayVersions.length - 1], newData.astarArray))) {
+            setAstarArrayVersions(prev => [...prev, newData.astarArray]);
+            setCurrentVersionIndex(prev => prev + 1);
+        }
+    }
+}, [lastMessage, astarArrayVersions]);
+
 
   return (
-    <div>
+    <div style={{width:"100%", height:"100%"}}>
       <div>
-        <h3>Factory Map</h3>
-        {astarArrayVersions[currentVersionIndex] && <pre>{astarArrayVersions[currentVersionIndex]}</pre>}
+        {/* {astarArrayVersions[currentVersionIndex] && <pre>{astarArrayVersions[currentVersionIndex]}</pre>} */}
 
         {/* Display the slider only when there's more than 1 version */}
         {astarArrayVersions.length > 1 && (
@@ -102,6 +106,8 @@ export const FactoryMap = () => {
               onChange={e => setCurrentVersionIndex(Number(e.target.value))}
             />
             <span>Version: {currentVersionIndex + 1}/{astarArrayVersions.length}</span>
+            { currentVersionIndex>=0? <Robots grid={astarArrayVersions[currentVersionIndex-1>0?currentVersionIndex-1:0]}/>  : null }
+            
           </div>
         )}
       </div>
@@ -165,10 +171,13 @@ function App() {
 
         </Box>
 
-        <Robots grid={grid} />
+
+        <FactoryMap></FactoryMap>
+
+
       </Box>
        
-
+     
 
 
       </Box>

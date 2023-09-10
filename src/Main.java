@@ -1,14 +1,12 @@
-import com.ai.astar.*;
-import jade.core.Agent;
 import jade.core.Runtime;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
 import jade.wrapper.*;
 
 import java.util.ArrayDeque;
+import java.util.Arrays;
 import java.util.Queue;
 import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -17,11 +15,6 @@ import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
 import com.ai.astar.AStar;
 
-
-
-import agents.MapWebSocketHandler;
-import agents.PackageTask;
-import agents.Package;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.websocket.server.WebSocketHandler;
@@ -136,18 +129,16 @@ public class Main {
         executor.scheduleAtFixedRate(() -> {
             Queue<PackageTask> newTasks = generatePackageTasks(1, rows, cols);
             packageTaskQueue.addAll(newTasks);
-            MapWebSocketHandler.broadcastData(mapToString(aStar),packageTaskQueue);
-            //System.out.println("New tasks added: " + newTasks);
+
             //   System.out.println("New tasks added: " + newTasks);
+
         }, 5, 5, TimeUnit.SECONDS);
 
-//        executorPrintMap.scheduleAtFixedRate(() -> {
-//            System.out.println(mapToString(aStar));
-//        }, 2, 2, TimeUnit.SECONDS);
 
 
 
-        Server server = new Server(8080);
+
+        Server server = new Server(4000);
         server.setHandler(new WebSocketHandler() {
             @Override
             public void configure(WebSocketServletFactory factory) {
@@ -155,5 +146,13 @@ public class Main {
             }
         });
         server.start();
+
+
+
+        executorPrintMap.scheduleAtFixedRate(() -> {
+//            System.out.println(mapToString(aStar));
+            printMap(aStar);
+            MapWebSocketHandler.broadcastData(aStar.getStringArrayMap(),packageTaskQueue);
+        }, 1, 1, TimeUnit.SECONDS);
 
     }}

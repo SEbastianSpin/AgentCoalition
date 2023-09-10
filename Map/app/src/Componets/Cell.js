@@ -4,15 +4,15 @@ import Box from '@mui/material/Box';
 
 const Cell = ({ value }) => {
   return (
-    <Box>
-      {value !== 0 && <SmartToyIcon />}
+    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+      {value !== " " && <SmartToyIcon />}
       <Box
         sx={{
           fontSize: '0.75rem',
-          opacity:"0.4"
+          opacity: "0.4"
         }}
       >
-        {value !== 0? value:null}
+        {value !== 0 ? value : null}
       </Box>
     </Box>
   );
