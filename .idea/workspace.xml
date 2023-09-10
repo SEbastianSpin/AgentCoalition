@@ -4,25 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a91798c0-2ce1-4615-b388-ff59a893c990" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/eclipse_jetty_websocket_javax_server_impl.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/APDescription.txt" beforeDir="false" afterPath="$PROJECT_DIR$/APDescription.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MTPs-Main-Container.txt" beforeDir="false" afterPath="$PROJECT_DIR$/MTPs-Main-Container.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Map/app/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/Map/app/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Map/app/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/Map/app/src/App.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Map/app/src/Componets/Cell.js" beforeDir="false" afterPath="$PROJECT_DIR$/Map/app/src/Componets/Cell.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProjectWorking.iml" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectWorking.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/SchedulerAgent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SchedulerAgent.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/agents/AgentTransporter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AgentTransporter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/agents/DataWrapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/DataWrapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/agents/MapWebSocketHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/MapWebSocketHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/agents/Package.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Package.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/agents/PackageTask.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/PackageTask.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/agents/Task.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Task.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/agents/ToJason.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ToJason.java" afterDir="false" />
-    </list>
+    <list default="true" id="a91798c0-2ce1-4615-b388-ff59a893c990" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
