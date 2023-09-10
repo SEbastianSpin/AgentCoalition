@@ -23,7 +23,7 @@ public class TransportAgent extends Agent {
     public int id;
 
     protected AID schedulerAID;
-    protected int curX, curY,goalX,goalY;
+    protected int curX, curY,goalX,goalY,startX,startY, taskId;
     protected Status status;
 
     protected String type;
@@ -32,8 +32,8 @@ public class TransportAgent extends Agent {
     private double age; //time it spends till breakdown
 
 
-    private double lambda = 0.9;
-   //private double lambda = 0.000000333333333;
+    //private double lambda = 0.9;
+   private double lambda = 0.00333333333;
 
 
     public String value;

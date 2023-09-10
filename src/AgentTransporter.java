@@ -27,13 +27,19 @@ public class AgentTransporter extends TransportAgent {
                 ACLMessage rcv = receive();
                 if(rcv != null) {
                     switch (rcv.getPerformative()) {
-                        case ACLMessage.INFORM -> {
+                        case ACLMessage.INFORM-> {
                             //AGENT WILL MOVE TO THE BROKEN AGENT.
                             goalX = Integer.parseInt(rcv.getContent().split(" ")[0]);
                             goalY = Integer.parseInt(rcv.getContent().split(" ")[1]);
                             System.out.println(getAgent()+" I have to save agent at "+goalX+" "+goalY);
                             setStatus(Status.ACTIVE);
+                            if(curX>goalX){          //USED TO PREVENT GOING SAME LOCATION WITH BROKEN AGENT
+                                goalX = goalX +1;
+                            }
 
+                            else if(curX < goalX){
+                                goalX = goalX -1;
+                            }
                         }
                     }
                     block();
@@ -60,6 +66,8 @@ public class AgentTransporter extends TransportAgent {
         });
 
     }
+
+
     protected void setup() {
 
         System.out.println("Hello! AGENT-TRANSPORTER "+getAID().getName()+" is ready.");

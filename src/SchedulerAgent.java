@@ -136,12 +136,12 @@ public class SchedulerAgent extends Agent {
 
                     int X = Integer.parseInt(rcv.getContent().split(" ")[3]);
                     int Y = Integer.parseInt(rcv.getContent().split(" ")[4]);
+
                     DFAgentDescription[] agentTransporter = searchAgents("AgentTransporter", Status.IDLE,1);
                     ACLMessage message = new ACLMessage(ACLMessage.INFORM);
                     message.setContent(X+" "+Y);
                     message.addReceiver((AID)agentTransporter[0].getName());
                     send(message);
-
                 }
                 else {
                     String[] parts = rcv.getContent().split(",");

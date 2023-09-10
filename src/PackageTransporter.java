@@ -20,7 +20,7 @@ import static java.lang.Thread.sleep;
 public class PackageTransporter extends TransportAgent {
     List<AID> group;
     private int state = 1;
-    private int startX, startY, goalX, goalY, taskId;
+    private int  goalX, goalY;
 
 
     public PackageTransporter(AStar pf, int startX, int startY) {
@@ -141,7 +141,7 @@ public class PackageTransporter extends TransportAgent {
             }
             case ACLMessage.REQUEST -> System.out.println("Debug-Transporter-" + id + " " + message.getContent() + "");
             case ACLMessage.INFORM -> {
-                if(message.hasByteSequenceContent()) {
+                    if(message.hasByteSequenceContent()) {
                     try {
                         group = (List<AID>) message.getContentObject();
                     } catch (UnreadableException e) {
