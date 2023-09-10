@@ -23,7 +23,7 @@ public class Main {
             int[][] origin = {{random.nextInt(rowBound - 1), random.nextInt(colBound - 1)}};
             int[][] destination = {{random.nextInt(rowBound - 1), random.nextInt(colBound - 1)}};
 //            float weight = (random.nextBoolean()) ? 200f : 400f;
-            float weight = 200f;
+            float weight = 100f;
             Package pkg = new Package(weight, random.nextInt());
             PackageTask task = new PackageTask(taskID++, origin, destination, pkg);
             packageTaskQueue.add(task);
@@ -67,9 +67,9 @@ public class Main {
         }
 
 
-        for (int i = 0; i < 3; i++) {
-            int startX =  9;
-            int startY = (i + 1) % pf.getSearchArea()[0].length;
+        for (int i = 0; i < 1; i++) {
+            int startX =  8;
+            int startY = (i + 2) % pf.getSearchArea()[0].length;
 
             try {
                 AgentTransporter agent = new AgentTransporter(pf, startX, startY);
@@ -112,7 +112,7 @@ public class Main {
         Queue<PackageTask> packageTaskQueue = generatePackageTasks(2, rows, cols);
 
         System.out.println(packageTaskQueue);
-        createAgents(2, packageTaskQueue,aStar);
+        createAgents(1, packageTaskQueue,aStar);
         ScheduledExecutorService executorTasks = Executors.newScheduledThreadPool(1); //Periodically adding new tasks
         ScheduledExecutorService executorPrintMap = Executors.newScheduledThreadPool(1);
 

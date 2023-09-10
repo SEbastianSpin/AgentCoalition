@@ -1,7 +1,9 @@
 import com.ai.astar.AStar;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
+import jade.core.behaviours.OneShotBehaviour;
 import jade.core.behaviours.TickerBehaviour;
+import jade.core.behaviours.WakerBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.Property;
@@ -25,12 +27,13 @@ public class AgentTransporter extends TransportAgent {
                 ACLMessage rcv = receive();
                 if(rcv != null) {
                     switch (rcv.getPerformative()) {
-                        case ACLMessage.REQUEST -> {
+                        case ACLMessage.INFORM -> {
                             //AGENT WILL MOVE TO THE BROKEN AGENT.
                             goalX = Integer.parseInt(rcv.getContent().split(" ")[0]);
                             goalY = Integer.parseInt(rcv.getContent().split(" ")[1]);
                             System.out.println(getAgent()+" I have to save agent at "+goalX+" "+goalY);
                             setStatus(Status.ACTIVE);
+
                         }
                     }
                     block();
@@ -41,7 +44,8 @@ public class AgentTransporter extends TransportAgent {
 
     public void moveToRepair(int locationX, int locationY) {
 
-        int[] cur = pf.move(curX, curY, locationX, locationY, "R"+id);
+        System.out.println("Repair-Transporter-" + id + ": Current Pos: (" + curX + "," + curY + ") Goal: (" + locationX + "," + locationY+")");
+        int[] cur = pf.move(curX, curY, locationX, locationY, "R");
         curX = cur[1];
         curY = cur[0];
     }
@@ -60,8 +64,9 @@ public class AgentTransporter extends TransportAgent {
 
         System.out.println("Hello! AGENT-TRANSPORTER "+getAID().getName()+" is ready.");
         registerAgents();
-        messageHandler();
         saveAgent();
+        messageHandler();
+
     }
 
 

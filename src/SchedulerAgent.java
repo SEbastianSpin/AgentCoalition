@@ -67,6 +67,8 @@ public class SchedulerAgent extends Agent {
             message.setContentObject((Serializable) agents);
             message.addReceiver(agents.get(0));
             send(message);
+            message.setContent("leader, group value is:"+ (char)('A' + (agentTaskId % 26)));
+            send(message);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -110,16 +112,6 @@ public class SchedulerAgent extends Agent {
     }
 
 
-    private void detectBreakout() //THIS FUNCTION WILL DETECT BREAKOUT AND SEND MESSAGE (CONTAINS COORDINATES OF BROKEN AGENT TO THE AGENTRANSPOTER .
-    {
-        ArrayList<Integer> Coordinates = new ArrayList<>();
-        DFAgentDescription[] brokenAgent = searchAgents("PackageTransporter", Status.BROKEN,1); // DETECTS BROKEN PackageTransporters.
-        DFAgentDescription[] agentTransporter = searchAgents("AgentTransporter", Status.IDLE,1);
-        ACLMessage message = new ACLMessage(ACLMessage.REQUEST);
-        //message.setContent(); The destination (location of broken agent will be the content)
-        message.addReceiver(agentTransporter[0].getName());
-        send(message);
-    }
 
     /*
      * @brief listen to incoming messages from transport agents.
@@ -145,7 +137,7 @@ public class SchedulerAgent extends Agent {
                     int X = Integer.parseInt(rcv.getContent().split(" ")[3]);
                     int Y = Integer.parseInt(rcv.getContent().split(" ")[4]);
                     DFAgentDescription[] agentTransporter = searchAgents("AgentTransporter", Status.IDLE,1);
-                    ACLMessage message = new ACLMessage(ACLMessage.REQUEST);
+                    ACLMessage message = new ACLMessage(ACLMessage.INFORM);
                     message.setContent(X+" "+Y);
                     message.addReceiver((AID)agentTransporter[0].getName());
                     send(message);

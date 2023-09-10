@@ -32,8 +32,8 @@ public class TransportAgent extends Agent {
     private double age; //time it spends till breakdown
 
 
-    private double lambda = 0.05;
-    //private double lambda = 0.00333333333;
+    private double lambda = 0.9;
+   //private double lambda = 0.000000333333333;
 
 
     public String value;
