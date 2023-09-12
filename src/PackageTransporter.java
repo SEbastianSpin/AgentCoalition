@@ -145,6 +145,7 @@ public class PackageTransporter extends TransportAgent {
                     pf.updateNode(curX, curY, "A");
                     try {
                         group = (List<AID>) message.getContentObject();
+                        pf.clearNode(curX, curY);
                     } catch (UnreadableException e) {
                         throw new RuntimeException(e);
                     }

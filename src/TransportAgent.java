@@ -59,7 +59,7 @@ public class TransportAgent extends Agent {
                     age++;
                     reliabiltiy = Math.exp(-lambda * age);
                     System.out.println("Debug-Transport "+ id +" Reliability = "+ reliabiltiy);
-                    if ( random.nextDouble(1)> reliabiltiy) { // has to change to States.Active
+                    if ( random.nextDouble(0.3)> reliabiltiy) { // has to change to States.Active
                         setStatus(Status.BROKEN);
                         age = 0;
                         System.out.println(getName() + " has broken down");

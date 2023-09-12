@@ -30,8 +30,8 @@ public class Main {
         for(int i = 0; i <numTasks; i++){
             int[][] origin = {{random.nextInt(rowBound - 1), random.nextInt(colBound - 1)}};
             int[][] destination = {{random.nextInt(rowBound - 1), random.nextInt(colBound - 1)}};
-//            float weight = (random.nextBoolean()) ? 200f : 400f;
-            float weight = 200f;
+            float weight = (random.nextBoolean()) ? 200f : 400f;
+            //float weight = 200f;
             Package pkg = new Package(weight, random.nextInt());
             PackageTask task = new PackageTask(taskID++, origin, destination, pkg);
             packageTaskQueue.add(task);
@@ -115,27 +115,12 @@ public class Main {
     public static void main(String[] args) throws Exception {
         System.out.println("Hello world!");
         Random random = new Random();
-        int rows = 10;
-        int cols = 10;
+        int rows = 12;
+        int cols = 12;
         AStar aStar = new AStar(rows, cols);
-        Queue<PackageTask> packageTaskQueue = generatePackageTasks(2, rows, cols);
+        Queue<PackageTask> packageTaskQueue = generatePackageTasks(4, rows, cols);
 
         System.out.println(packageTaskQueue);
-        createAgents(8, packageTaskQueue,aStar);
-        ScheduledExecutorService executorTasks = Executors.newScheduledThreadPool(1); //Periodically adding new tasks
-        ScheduledExecutorService executorPrintMap = Executors.newScheduledThreadPool(1);
-
-        ScheduledExecutorService executor = Executors.newScheduledThreadPool(4);
-        executor.scheduleAtFixedRate(() -> {
-            Queue<PackageTask> newTasks = generatePackageTasks(1, rows, cols);
-            packageTaskQueue.addAll(newTasks);
-
-            //   System.out.println("New tasks added: " + newTasks);
-
-        }, 5, 5, TimeUnit.SECONDS);
-
-
-
 
 
         Server server = new Server(4000);
@@ -147,12 +132,39 @@ public class Main {
         });
         server.start();
 
+        ScheduledExecutorService executorPrintMap = Executors.newScheduledThreadPool(1);
 
+
+
+
+
+        createAgents(4, packageTaskQueue,aStar);
 
         executorPrintMap.scheduleAtFixedRate(() -> {
 //            System.out.println(mapToString(aStar));
-            printMap(aStar);
+            // printMap(aStar);
             MapWebSocketHandler.broadcastData(aStar.getStringArrayMap(),packageTaskQueue);
-        }, 1, 1, TimeUnit.SECONDS);
+        }, 0, 1000, TimeUnit.MILLISECONDS);
+        //ScheduledExecutorService executorTasks = Executors.newScheduledThreadPool(1); //Periodically adding new tasks
+
+
+//        ScheduledExecutorService executor = Executors.newScheduledThreadPool(4);
+//        executor.scheduleAtFixedRate(() -> {
+//            Queue<PackageTask> newTasks = generatePackageTasks(1, rows, cols);
+//            packageTaskQueue.addAll(newTasks);
+//
+//            //   System.out.println("New tasks added: " + newTasks);
+//
+//        }, 30, 20, TimeUnit.SECONDS);
+
+
+
+
+
+
+
+
+
+
 
     }}
